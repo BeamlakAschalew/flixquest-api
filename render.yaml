@@ -2,7 +2,7 @@ services:
     - type: web
       name: flixquest-api # Name of the service
       env: docker
-      repo: https://github.com/consumet/api.consumet.org.git
+      repo: https://github.com/BeamlakAschalew/flixquest-api.git
       plan: free
       branch: main
       envVars:
