@@ -75,13 +75,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 */
 
                 if (outputSuperStream?.stream?.type === "file") {
-                    if (outputSuperStream.stream.qualities["4K"] != undefined) {
-                        superstreamSources.push({
-                            quality: "4",
-                            url: outputSuperStream.stream.qualities["4K"].url,
-                            isM3U8: false,
-                        });
-                    }
                     if (outputSuperStream.stream.qualities[1080] != undefined) {
                         superstreamSources.push({
                             quality: "1080",
@@ -237,13 +230,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     chalk.magentaBright(outputSuperStream?.stream.type),
                 );
                 if (outputSuperStream?.stream?.type === "file") {
-                    if (outputSuperStream.stream.qualities["4K"] != undefined) {
-                        superstreamSources.push({
-                            quality: "4",
-                            url: outputSuperStream.stream.qualities["4K"].url,
-                            isM3U8: false,
-                        });
-                    }
                     if (outputSuperStream.stream.qualities[1080] != undefined) {
                         superstreamSources.push({
                             quality: "1080",
