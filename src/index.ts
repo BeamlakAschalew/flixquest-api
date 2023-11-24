@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const workers_url = process.env.WORKERS_URL && process.env.WORKERS_URL;
+export const tmdbKey = process.env.TMDB_KEY && process.env.TMDB_KEY;
 
 (async () => {
     const PORT = Number(process.env.PORT) || 3000;
@@ -14,6 +15,9 @@ export const workers_url = process.env.WORKERS_URL && process.env.WORKERS_URL;
     console.log(chalk.green(`Starting server on port ${PORT}... 🚀`));
     if (!process.env.WORKERS_URL)
         console.warn(chalk.yellowBright("Workers url not found"));
+
+    if (!process.env.TMDB_KEY)
+        console.warn(chalk.yellowBright("TMDB key not found"));
 
     const fastify = Fastify({
         maxParamLength: 1000,

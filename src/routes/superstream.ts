@@ -10,7 +10,12 @@ import {
     FastifyInstance,
     RegisterOptions,
 } from "fastify";
-import { fetchM3U8Content, providers } from "../models/functions";
+import {
+    fetchM3U8Content,
+    fetchMovieData,
+    fetchTVData,
+    providers,
+} from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
 import chalk from "chalk";
 
@@ -22,19 +27,27 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
         });
     });
 
-    // media from TMDB
-
     fastify.get(
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
-            const title = (request.query as { title: string }).title;
-            const releaseYear = (request.query as { releaseYear: string })
-                .releaseYear;
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            let releaseYear: string = "";
+            let title: string = "";
 
-            console.log(title);
-            console.log(releaseYear);
-            console.log(tmdbId);
+            if (typeof tmdbId === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "tmdb id is required" });
+
+            await fetchMovieData(tmdbId).then((data) => {
+                if (data) {
+                    releaseYear = data?.year.toString();
+                    title = data?.title;
+                }
+            });
+
+            console.warn(chalk.bgWhiteBright(releaseYear));
+            console.warn(chalk.bgWhiteBright(title));
 
             const media: MovieMedia = {
                 type: "movie",
@@ -42,17 +55,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 releaseYear: parseInt(releaseYear),
                 tmdbId: tmdbId,
             };
-
-            if (typeof title === "undefined")
-                return reply.status(400).send({ message: "title is required" });
-            if (typeof releaseYear === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "release year is required" });
-            if (typeof tmdbId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "imdb id is required" });
 
             let superstreamSources: ResolutionStream[] = [];
             let superstreamSubs: SubData[] = [];
@@ -62,17 +64,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     media: media,
                     embedOrder: ["superstream"],
                 });
-
-                /*
-                 embedOrder: [
-                        "superstream",
-                        "flixhq",
-                        "show_box",
-                        "remotestream",
-                        "zoechip",
-                        "gomovies",
-                    ],
-                */
 
                 if (outputSuperStream?.stream?.type === "file") {
                     if (outputSuperStream.stream.qualities[1080] != undefined) {
@@ -124,7 +115,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err: err,
+                    err,
                 });
             }
         },
@@ -133,19 +124,36 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
     fastify.get(
         "/watch-tv",
         async (request: FastifyRequest, reply: FastifyReply) => {
-            const title = (request.query as { title: string }).title;
-            const releaseYear = (request.query as { releaseYear: string })
-                .releaseYear;
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
-            const episodeId = (request.query as { episodeId: string })
-                .episodeId;
-            const seasonId = (request.query as { seasonId: string }).seasonId;
 
-            console.log(title);
-            console.log(releaseYear);
-            console.log(tmdbId);
+            let title: string = "";
+            let episodeId: string = "";
+            let seasonId: string = "";
+            let releaseYear: string = "";
+
+            if (typeof tmdbId === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "tmdb id is required" });
+            if (typeof episode === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "episode is required" });
+            if (typeof season === "undefined")
+                return reply.status(400).send({
+                    message: "season is required",
+                });
+
+            await fetchTVData(tmdbId, season, episode).then((data) => {
+                if (data) {
+                    title = data?.title;
+                    episodeId = data?.episodeId.toString();
+                    seasonId = data?.seasonId.toString();
+                    releaseYear = data?.year.toString();
+                }
+            });
 
             const media: ShowMedia = {
                 type: "show",
@@ -162,73 +170,15 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 tmdbId: tmdbId,
             };
 
-            if (typeof title === "undefined")
-                return reply.status(400).send({ message: "title is required" });
-            if (typeof releaseYear === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "release year is required" });
-            if (typeof tmdbId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "imdb id is required" });
-            if (typeof episode === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "episode is required" });
-            if (typeof episodeId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "episode id is required" });
-            if (typeof season === "undefined")
-                return reply.status(400).send({
-                    message: "season is required",
-                });
-            if (typeof seasonId === "undefined")
-                return reply.status(400).send({
-                    message: "season id is required",
-                });
-
             let superstreamSources: ResolutionStream[] = [];
             let superstreamSubs: SubData[] = [];
 
             try {
                 const outputSuperStream = await providers.runAll({
                     media: media,
-                    embedOrder: ["flixhq", "superstream"],
+                    embedOrder: ["superstream"],
                 });
 
-                let outputFlixhqEmbed;
-                let outputFlixhq;
-
-                try {
-                    outputFlixhqEmbed = await providers.runSourceScraper({
-                        media: media,
-                        id: "flixhq",
-                    });
-
-                    console.warn(chalk.cyanBright(!outputSuperStream));
-
-                    outputFlixhq = await providers.runEmbedScraper({
-                        id: outputFlixhqEmbed.embeds[0].embedId,
-                        url: outputFlixhqEmbed.embeds[0].url,
-                    });
-                } catch (e) {}
-
-                /*
-                 embedOrder: [
-                        "superstream",
-                        "flixhq",
-                        "show_box",
-                        "remotestream",
-                        "zoechip",
-                        "gomovies",
-                    ],
-                */
-
-                console.warn(
-                    chalk.magentaBright(outputSuperStream?.stream.type),
-                );
                 if (outputSuperStream?.stream?.type === "file") {
                     if (outputSuperStream.stream.qualities[1080] != undefined) {
                         superstreamSources.push({
@@ -279,7 +229,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err: err,
+                    err,
                 });
             }
         },

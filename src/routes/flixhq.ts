@@ -10,7 +10,12 @@ import {
     FastifyInstance,
     RegisterOptions,
 } from "fastify";
-import { fetchM3U8Content, providers } from "../models/functions";
+import {
+    fetchM3U8Content,
+    fetchMovieData,
+    fetchTVData,
+    providers,
+} from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
 import chalk from "chalk";
 
@@ -18,7 +23,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
             intro: "Welcome to the flixhq provider",
-            routes: ["/watch-movie", "/watch-tv"],
+            routes: "/watch-movie " + "/watch-tv",
         });
     });
 
@@ -27,14 +32,21 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
     fastify.get(
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
-            const title = (request.query as { title: string }).title;
-            const releaseYear = (request.query as { releaseYear: string })
-                .releaseYear;
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            let releaseYear: string = "";
+            let title: string = "";
 
-            console.log(title);
-            console.log(releaseYear);
-            console.log(tmdbId);
+            if (typeof tmdbId === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "tmdb id is required" });
+
+            await fetchMovieData(tmdbId).then((data) => {
+                if (data) {
+                    releaseYear = data?.year.toString();
+                    title = data?.title;
+                }
+            });
 
             const media: MovieMedia = {
                 type: "movie",
@@ -43,16 +55,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 tmdbId: tmdbId,
             };
 
-            if (typeof title === "undefined")
-                return reply.status(400).send({ message: "title is required" });
-            if (typeof releaseYear === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "release year is required" });
-            if (typeof tmdbId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "imdb id is required" });
             let flixhqSources: ResolutionStream[] = [];
             let flixhqSubs: SubData[] = [];
 
@@ -68,7 +70,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 });
 
                 if (outputFlixhq?.stream?.type === "hls") {
-                    console.warn(chalk.magenta("reached here"));
                     for (
                         let i = 0;
                         i < outputFlixhq.stream.captions.length;
@@ -122,7 +123,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err: err,
+                    err,
                 });
             }
         },
@@ -131,19 +132,36 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
     fastify.get(
         "/watch-tv",
         async (request: FastifyRequest, reply: FastifyReply) => {
-            const title = (request.query as { title: string }).title;
-            const releaseYear = (request.query as { releaseYear: string })
-                .releaseYear;
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
-            const episodeId = (request.query as { episodeId: string })
-                .episodeId;
-            const seasonId = (request.query as { seasonId: string }).seasonId;
 
-            console.log(title);
-            console.log(releaseYear);
-            console.log(tmdbId);
+            let title: string = "";
+            let episodeId: string = "";
+            let seasonId: string = "";
+            let releaseYear: string = "";
+
+            if (typeof tmdbId === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "tmdb id is required" });
+            if (typeof episode === "undefined")
+                return reply
+                    .status(400)
+                    .send({ message: "episode is required" });
+            if (typeof season === "undefined")
+                return reply.status(400).send({
+                    message: "season is required",
+                });
+
+            await fetchTVData(tmdbId, season, episode).then((data) => {
+                if (data) {
+                    title = data?.title;
+                    episodeId = data?.episodeId.toString();
+                    seasonId = data?.seasonId.toString();
+                    releaseYear = data?.year.toString();
+                }
+            });
 
             const media: ShowMedia = {
                 type: "show",
@@ -160,33 +178,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 tmdbId: tmdbId,
             };
 
-            if (typeof title === "undefined")
-                return reply.status(400).send({ message: "title is required" });
-            if (typeof releaseYear === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "release year is required" });
-            if (typeof tmdbId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "imdb id is required" });
-            if (typeof episode === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "episode is required" });
-            if (typeof episodeId === "undefined")
-                return reply
-                    .status(400)
-                    .send({ message: "episode id is required" });
-            if (typeof season === "undefined")
-                return reply.status(400).send({
-                    message: "season is required",
-                });
-            if (typeof seasonId === "undefined")
-                return reply.status(400).send({
-                    message: "season id is required",
-                });
-
             let flixhqSources: ResolutionStream[] = [];
             let flixhqSubs: SubData[] = [];
 
@@ -201,15 +192,12 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     id: "flixhq",
                 });
 
-                console.warn(chalk.cyanBright(!outputSuperStream));
-
                 const outputFlixhq = await providers.runEmbedScraper({
                     id: outputFlixhqEmbed.embeds[0].embedId,
                     url: outputFlixhqEmbed.embeds[0].url,
                 });
 
                 if (outputFlixhq?.stream?.type === "hls") {
-                    console.warn(chalk.magenta("reached here"));
                     for (
                         let i = 0;
                         i < outputFlixhq.stream.captions.length;
@@ -263,7 +251,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err: err,
+                    err,
                 });
             }
         },
