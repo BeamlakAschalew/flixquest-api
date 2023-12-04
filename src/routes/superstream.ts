@@ -115,7 +115,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err,
+                    error: err,
                 });
             }
         },
@@ -229,7 +229,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
-                    err,
+                    error: err,
                 });
             }
         },

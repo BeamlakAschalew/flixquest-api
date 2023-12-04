@@ -22,7 +22,7 @@ import chalk from "chalk";
 const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
-            intro: "Welcome to the flixhq provider",
+            intro: "Welcome to the zoe provider",
             routes: "/watch-movie " + "/watch-tv",
         });
     });
@@ -59,61 +59,56 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             let flixhqSubs: SubData[] = [];
 
             try {
-                const outputFlixhqEmbed = await providers.runSourceScraper({
+                const outputZoeEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "zoechip",
                 });
 
-                const outputFlixhq = await providers.runEmbedScraper({
-                    id: outputFlixhqEmbed.embeds[0].embedId,
-                    url: outputFlixhqEmbed.embeds[0].url,
-                });
+                console.log(outputZoeEmbed.embeds);
 
-                if (outputFlixhq?.stream?.type === "hls") {
-                    for (
-                        let i = 0;
-                        i < outputFlixhq.stream.captions.length;
-                        i++
-                    ) {
-                        flixhqSubs.push({
-                            lang: outputFlixhq.stream.captions[i].language,
-                            url: outputFlixhq.stream.captions[i].url,
-                        });
-                    }
-                    flixhqSources.push({
-                        quality: "auto",
-                        url: outputFlixhq?.stream.playlist,
-                        isM3U8: true,
-                    });
-                    async function parseM3U8ContentFromUrl(url: string) {
-                        try {
-                            const m3u8Content = await fetchM3U8Content(url);
-                            const regex =
-                                /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
-                            const matches: {
-                                resolution: string;
-                                url: string;
-                            }[] = [];
-                            let match;
+                // console.log(outputZoe?.sourceId);
 
-                            while ((match = regex.exec(m3u8Content)) !== null) {
-                                const resolution = match[1];
-                                const url = match[2];
-                                matches.push({ resolution, url });
-                                flixhqSources.push({
-                                    quality: resolution,
-                                    url: url,
-                                    isM3U8: true,
-                                });
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
+                // if (outputZoe?.stream?.type === "hls") {
+                //     for (let i = 0; i < outputZoe.stream.captions.length; i++) {
+                //         flixhqSubs.push({
+                //             lang: outputZoe.stream.captions[i].language,
+                //             url: outputZoe.stream.captions[i].url,
+                //         });
+                //     }
+                //     flixhqSources.push({
+                //         quality: "auto",
+                //         url: outputZoe?.stream.playlist,
+                //         isM3U8: true,
+                //     });
+                //     async function parseM3U8ContentFromUrl(url: string) {
+                //         try {
+                //             const m3u8Content = await fetchM3U8Content(url);
+                //             const regex =
+                //                 /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
+                //             const matches: {
+                //                 resolution: string;
+                //                 url: string;
+                //             }[] = [];
+                //             let match;
 
-                    const m3u8Url = outputFlixhq.stream.playlist; // Replace with your actual M3U8 URL
-                    await parseM3U8ContentFromUrl(m3u8Url);
-                }
+                //             while ((match = regex.exec(m3u8Content)) !== null) {
+                //                 const resolution = match[1];
+                //                 const url = match[2];
+                //                 matches.push({ resolution, url });
+                //                 flixhqSources.push({
+                //                     quality: resolution,
+                //                     url: url,
+                //                     isM3U8: true,
+                //                 });
+                //             }
+                //         } catch (error) {
+                //             console.error(error);
+                //         }
+                //     }
+
+                //     const m3u8Url = outputZoe.stream.playlist; // Replace with your actual M3U8 URL
+                //     await parseM3U8ContentFromUrl(m3u8Url);
+                // }
 
                 reply.status(200).send({
                     sources: flixhqSources,
@@ -182,14 +177,14 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             let flixhqSubs: SubData[] = [];
 
             try {
-                // const outputSuperStream = await providers.runAll({
-                //     media: media,
-                //     embedOrder: ["gomovies", "superstream"],
-                // });
+                const outputSuperStream = await providers.runAll({
+                    media: media,
+                    embedOrder: ["flixhq", "superstream"],
+                });
 
                 const outputFlixhqEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "flixhq",
                 });
 
                 const outputFlixhq = await providers.runEmbedScraper({
