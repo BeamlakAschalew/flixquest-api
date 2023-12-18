@@ -135,6 +135,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             let episodeId: string = "";
             let seasonId: string = "";
             let releaseYear: string = "";
+            let numberOfSeasons: string = "";
 
             if (typeof tmdbId === "undefined")
                 return reply
@@ -155,6 +156,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     episodeId = data?.episodeId.toString();
                     seasonId = data?.seasonId.toString();
                     releaseYear = data?.year.toString();
+                    numberOfSeasons = data?.numberOfSeasons.toString();
                 }
             });
 
@@ -171,6 +173,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 },
                 releaseYear: parseInt(releaseYear),
                 tmdbId: tmdbId,
+                numberOfSeasons: parseInt(numberOfSeasons),
             };
 
             let flixhqSources: ResolutionStream[] = [];

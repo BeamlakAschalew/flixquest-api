@@ -66,6 +66,13 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 });
 
                 if (outputSuperStream?.stream?.type === "file") {
+                    if (outputSuperStream.stream.qualities["4K"] != undefined) {
+                        superstreamSources.push({
+                            quality: "4K",
+                            url: outputSuperStream.stream.qualities["4K"].url,
+                            isM3U8: false,
+                        });
+                    }
                     if (outputSuperStream.stream.qualities[1080] != undefined) {
                         superstreamSources.push({
                             quality: "1080",
@@ -132,6 +139,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             let episodeId: string = "";
             let seasonId: string = "";
             let releaseYear: string = "";
+            let numberOfSeasons: string = "";
 
             if (typeof tmdbId === "undefined")
                 return reply
@@ -152,6 +160,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     episodeId = data?.episodeId.toString();
                     seasonId = data?.seasonId.toString();
                     releaseYear = data?.year.toString();
+                    numberOfSeasons = data?.numberOfSeasons.toString();
                 }
             });
 
@@ -168,6 +177,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 },
                 releaseYear: parseInt(releaseYear),
                 tmdbId: tmdbId,
+                numberOfSeasons: parseInt(numberOfSeasons),
             };
 
             let superstreamSources: ResolutionStream[] = [];

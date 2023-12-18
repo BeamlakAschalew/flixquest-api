@@ -57,6 +57,7 @@ export async function fetchTVData(
     episodeId: number;
     seasonId: number;
     year: number;
+    numberOfSeasons: number;
 } | null> {
     try {
         const apiUrlSeason = `${tmdbBaseUrl}/3/tv/${id}/season/${seasonNum}?language=en-US&api_key=${tmdbKey}`;
@@ -71,11 +72,12 @@ export async function fetchTVData(
         const year = parseInt(
             resposneGeneral.data.first_air_date.split("-")[0],
         );
+        const numberOfSeasons = resposneGeneral.data.number_of_seasons;
         const episodeIndex = parseInt(episodeNum) - 1;
 
         if (episodeIndex >= 0 && episodeIndex < episodes.length) {
             const { id: episodeId } = episodes[episodeIndex];
-            return { title, episodeId, seasonId, year };
+            return { title, episodeId, seasonId, year, numberOfSeasons };
         } else {
             throw new Error("Invalid episode number");
         }
