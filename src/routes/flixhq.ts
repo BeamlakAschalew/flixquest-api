@@ -14,6 +14,7 @@ import {
     fetchM3U8Content,
     fetchMovieData,
     fetchTVData,
+    langConverter,
     providers,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
@@ -76,7 +77,9 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                         i++
                     ) {
                         flixhqSubs.push({
-                            lang: outputFlixhq.stream.captions[i].language,
+                            lang: langConverter(
+                                outputFlixhq.stream.captions[i].language,
+                            ),
                             url: outputFlixhq.stream.captions[i].url,
                         });
                     }
@@ -185,11 +188,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             let flixhqSubs: SubData[] = [];
 
             try {
-                // const outputSuperStream = await providers.runAll({
-                //     media: media,
-                //     embedOrder: ["gomovies", "superstream"],
-                // });
-
                 const outputFlixhqEmbed = await providers.runSourceScraper({
                     media: media,
                     id: "gomovies",
@@ -207,7 +205,9 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                         i++
                     ) {
                         flixhqSubs.push({
-                            lang: outputFlixhq.stream.captions[i].language,
+                            lang: langConverter(
+                                outputFlixhq.stream.captions[i].language,
+                            ),
                             url: outputFlixhq.stream.captions[i].url,
                         });
                     }

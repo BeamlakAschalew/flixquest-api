@@ -14,6 +14,7 @@ import {
     fetchM3U8Content,
     fetchMovieData,
     fetchTVData,
+    langConverter,
     providers,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
@@ -108,7 +109,9 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                         i++
                     ) {
                         superstreamSubs.push({
-                            lang: outputSuperStream.stream.captions[i].language,
+                            lang: langConverter(
+                                outputSuperStream.stream.captions[i].language,
+                            ),
                             url: outputSuperStream.stream.captions[i].url,
                         });
                     }
@@ -225,7 +228,9 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                         i++
                     ) {
                         superstreamSubs.push({
-                            lang: outputSuperStream.stream.captions[i].language,
+                            lang: langConverter(
+                                outputSuperStream.stream.captions[i].language,
+                            ),
                             url: outputSuperStream.stream.captions[i].url,
                         });
                     }

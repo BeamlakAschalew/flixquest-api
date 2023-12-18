@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import { workers_url } from "..";
 import dotenv from "dotenv";
 import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
+import { supportedLanguages } from "./types";
 dotenv.config();
 
 const proxyUrl = process.env.WORKERS_URL;
@@ -84,4 +85,14 @@ export async function fetchTVData(
     } catch (error) {
         throw new Error("Error fetching TMDB data:," + error);
     }
+}
+
+export function langConverter(short: string) {
+    for (let i = 0; i < supportedLanguages.length; i++) {
+        if (short === supportedLanguages[i].shortCode) {
+            return supportedLanguages[i].longName;
+        }
+    }
+
+    return short;
 }

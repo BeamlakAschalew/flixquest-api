@@ -1,7 +1,6 @@
 import Fastify from "fastify";
 import superstream from "./routes/superstream";
 import flixhq from "./routes/flixhq";
-import zoe from "./routes/zoe";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
@@ -32,14 +31,9 @@ export const tmdbKey = process.env.TMDB_KEY && process.env.TMDB_KEY;
 
     await fastify.register(superstream, { prefix: "/superstream" });
     await fastify.register(flixhq, { prefix: "/flixhq" });
-    await fastify.register(zoe, { prefix: "/zoe" });
 
     try {
         fastify.get("/", async (_, rp) => {
-            const src = await providers.listSources();
-            for (let i = 0; i < src.length; i++) {
-                console.log(src[i].id);
-            }
             rp.status(200).send("Welcome to FlixQuest API! 🎉");
         });
         fastify.get("*", (request, reply) => {
