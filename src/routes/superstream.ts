@@ -47,9 +47,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                 }
             });
 
-            console.warn(chalk.bgWhiteBright(releaseYear));
-            console.warn(chalk.bgWhiteBright(title));
-
             const media: MovieMedia = {
                 type: "movie",
                 title: title,
