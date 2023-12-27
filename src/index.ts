@@ -4,6 +4,7 @@ import flixhq from "./routes/flixhq";
 import zoe from "./routes/zoe";
 import remotestream from "./routes/remotestream";
 import smashystream from "./routes/smashystream";
+import gomovies from "./routes/gomovies";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
@@ -38,6 +39,7 @@ export const tmdbKey = process.env.TMDB_KEY && process.env.TMDB_KEY;
     await fastify.register(zoe, { prefix: "/zoe" });
     await fastify.register(remotestream, { prefix: "/remotestream" });
     await fastify.register(smashystream, { prefix: "/smashystream" });
+    await fastify.register(gomovies, { prefix: "/gomovies" });
 
     try {
         fastify.get("/", async (_, rp) => {
