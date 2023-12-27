@@ -190,7 +190,7 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
             try {
                 const outputFlixhqEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "flixhq",
                 });
 
                 const outputFlixhq = await providers.runEmbedScraper({
