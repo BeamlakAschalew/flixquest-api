@@ -16,6 +16,7 @@ REST API that fetches streaming links of movies and TV shows based on TMDB id
 | ZoeChip      | `zoe`         |
 | SmashyStream | `smashystream`|
 | RemoteStream | `remotestream`|
+| GoMovies     | `gomovies`    |
 
 
 ### Get all links and subtitles for a movie
