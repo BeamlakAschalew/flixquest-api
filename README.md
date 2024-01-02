@@ -4,7 +4,7 @@
 REST API that fetches streaming links of movies and TV shows based on TMDB id
 
 
-
+Hosted instance: https://flixquest-api.vercel.app
 
 ## API Reference
 
