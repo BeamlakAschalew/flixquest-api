@@ -29,7 +29,7 @@ Hosted instance: https://flixquest-api.vercel.app
 ```
 
 #### Example
-Get streaming link and subtitles for the movie 'The Hangover' from the 'ShowBox' provider
+Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBox' provider
 
 ```http
   GET /showbox/watch-movie?tmdbId=18785
