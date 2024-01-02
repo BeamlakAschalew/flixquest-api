@@ -1,4 +1,3 @@
-
 # FlixQuest API
 
 REST API that fetches streaming links of movies and TV shows based on TMDB id
@@ -30,7 +29,7 @@ Hosted instance: https://flixquest-api.vercel.app
 ```
 
 #### Example
-Get streaming link and subtitles for the movie 'The Hangover' from 'ShowBox' provider
+Get streaming link and subtitles for the movie 'The Hangover' from the 'ShowBox' provider
 
 ```http
   GET /showbox/watch-movie?tmdbId=18785
@@ -49,7 +48,7 @@ Get streaming link and subtitles for the movie 'The Hangover' from 'ShowBox' pro
 ```
 
 #### Example
-Get streaming link and subtitles for the TV show 'The Office' from 'ShowBox' provider
+Get streaming link and subtitles for the TV show 'The Office' from the 'ShowBox' provider
 
 ```http
   GET /showbox/watch-tv?tmdbId=2316&season=1&episode=1
