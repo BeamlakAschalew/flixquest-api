@@ -44,7 +44,7 @@ Get streaming link and subtitles for the movie 'The Hangover' from the 'ShowBox'
 | `episode`  | `string` | **Required**. The episode number of the episode |
 
 ```http
-  GET /{provider ID}watch-tv?tmdbId=tmdbId&season=season&episode=episode
+  GET /{provider ID}/watch-tv?tmdbId=tmdbId&season=season&episode=episode
 ```
 
 #### Example
