@@ -1,10 +1,9 @@
-
 # FlixQuest API
 
 REST API that fetches streaming links of movies and TV shows based on TMDB id
 
 
-
+Hosted instance: https://flixquest-api.vercel.app
 
 ## API Reference
 
@@ -16,6 +15,7 @@ REST API that fetches streaming links of movies and TV shows based on TMDB id
 | ZoeChip      | `zoe`         |
 | SmashyStream | `smashystream`|
 | RemoteStream | `remotestream`|
+| Gomovies     | `gomovies`    |
 
 
 ### Get all links and subtitles for a movie
@@ -29,10 +29,10 @@ REST API that fetches streaming links of movies and TV shows based on TMDB id
 ```
 
 #### Example
-Get streaming link and subtitles for the movie 'The Hangover'
+Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBox' provider
 
 ```http
-  GET /flixhq/watch-movie?tmdbId=18785
+  GET /showbox/watch-movie?tmdbId=18785
 ```
 
 ### Get all links and subtitles for an episode
@@ -44,14 +44,14 @@ Get streaming link and subtitles for the movie 'The Hangover'
 | `episode`  | `string` | **Required**. The episode number of the episode |
 
 ```http
-  GET /{provider ID}watch-tv?tmdbId=tmdbId&season=season&episode=episode
+  GET /{provider ID}/watch-tv?tmdbId=tmdbId&season=season&episode=episode
 ```
 
 #### Example
-Get streaming link and subtitles for the TV show 'The Office'
+Get streaming link and subtitles for the TV show 'The Office' from the 'ShowBox' provider
 
 ```http
-  GET /flixhq/watch-tv?tmdbId=2316&season=1&episode=1
+  GET /showbox/watch-tv?tmdbId=2316&season=1&episode=1
 ```
 
 
