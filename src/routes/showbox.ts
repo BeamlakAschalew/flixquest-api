@@ -1,26 +1,14 @@
+import { MovieMedia, ShowMedia } from "@movie-web/providers";
+import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
-    MovieMedia,
-    ScrapeMedia,
-    ShowMedia,
-    SourcererOutput,
-} from "@movie-web/providers";
-import {
-    FastifyRequest,
-    FastifyReply,
-    FastifyInstance,
-    RegisterOptions,
-} from "fastify";
-import {
-    fetchM3U8Content,
     fetchMovieData,
     fetchTVData,
     langConverter,
     providers,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
-import chalk from "chalk";
 
-const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
+const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
             intro: "Welcome to the superstream provider",
@@ -119,7 +107,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     subtitles: superstreamSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -238,7 +225,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     subtitles: superstreamSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

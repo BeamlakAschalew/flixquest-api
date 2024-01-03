@@ -1,15 +1,5 @@
-import {
-    MovieMedia,
-    ScrapeMedia,
-    ShowMedia,
-    SourcererOutput,
-} from "@movie-web/providers";
-import {
-    FastifyRequest,
-    FastifyReply,
-    FastifyInstance,
-    RegisterOptions,
-} from "fastify";
+import { MovieMedia, ShowMedia } from "@movie-web/providers";
+import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
     fetchM3U8Content,
     fetchMovieData,
@@ -18,9 +8,8 @@ import {
     providers,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
-import chalk from "chalk";
 
-const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
+const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
             intro: "Welcome to the gomovies provider",
@@ -110,11 +99,15 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                                 });
                             }
                         } catch (error) {
-                            console.error(error);
+                            reply.status(500).send({
+                                message:
+                                    "Something went wrong. Please try again later.",
+                                error: error,
+                            });
                         }
                     }
 
-                    const m3u8Url = outputgomovies.stream.playlist; // Replace with your actual M3U8 URL
+                    const m3u8Url = outputgomovies.stream.playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -123,7 +116,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     subtitles: gomoviesSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -238,11 +230,15 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                                 });
                             }
                         } catch (error) {
-                            console.error(error);
+                            reply.status(500).send({
+                                message:
+                                    "Something went wrong. Please try again later.",
+                                error: error,
+                            });
                         }
                     }
 
-                    const m3u8Url = outputgomovies.stream.playlist; // Replace with your actual M3U8 URL
+                    const m3u8Url = outputgomovies.stream.playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -251,7 +247,6 @@ const routes = async (fastify: FastifyInstance, options: RegisterOptions) => {
                     subtitles: gomoviesSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
