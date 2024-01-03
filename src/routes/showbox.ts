@@ -52,10 +52,10 @@ const routes = async (fastify: FastifyInstance) => {
                 });
 
                 if (outputSuperStream?.stream?.type === "file") {
-                    if (outputSuperStream.stream.qualities["4k"] != undefined) {
+                    if (outputSuperStream.stream.qualities["4K"] != undefined) {
                         superstreamSources.push({
                             quality: "4K",
-                            url: outputSuperStream.stream.qualities["4k"].url,
+                            url: outputSuperStream.stream.qualities["4K"].url,
                             isM3U8: false,
                         });
                     }

@@ -56,7 +56,7 @@ const routes = async (fastify: FastifyInstance) => {
             try {
                 const outputFlixhqEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "flixhq",
                 });
 
                 const outputFlixhq = await providers.runEmbedScraper({
@@ -121,6 +121,7 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: flixhqSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
