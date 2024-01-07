@@ -8,14 +8,15 @@ Hosted instance: https://flixquest-api.vercel.app
 ## API Reference
 
 #### List of available providers:
-| Name         | Id            |
-| :--------    | :-------      |
-| ShowBox      | `showbox`     |
-| FlixHQ       | `flixhq`      |
-| ZoeChip      | `zoe`         |
-| SmashyStream | `smashystream`|
-| RemoteStream | `remotestream`|
-| Gomovies     | `gomovies`    |
+| Name         | Id            | Status               |
+| :--------    | :-------      | :-------              |
+| ShowBox      | `showbox`     | 🟡 Working partially |   
+| FlixHQ       | `flixhq`      | 🟢 Working           |
+| ZoeChip      | `zoe`         | 🟢 Working           |
+| SmashyStream | `smashystream`| 🔴 Down              |
+| RemoteStream | `remotestream`| 🔴 Down              |
+| Gomovies     | `gomovies`    | 🟢 Working           |
+| VidSrc       | `vidsrc`      | 🟡 Working partially |
 
 
 ### Get all links and subtitles for a movie
