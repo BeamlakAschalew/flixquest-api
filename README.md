@@ -30,10 +30,10 @@ Hosted instance: https://flixquest-api.vercel.app
 ```
 
 #### Example
-Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBox' provider
+Get streaming link and subtitles for the movie 'The Hangover 1' from the 'FlixHQ' provider
 
 ```http
-  GET /showbox/watch-movie?tmdbId=18785
+  GET /flixhq/watch-movie?tmdbId=18785
 ```
 
 ### Get all links and subtitles for an episode
@@ -49,10 +49,10 @@ Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBo
 ```
 
 #### Example
-Get streaming link and subtitles for the TV show 'The Office' from the 'ShowBox' provider
+Get streaming link and subtitles for the TV show 'The Office' from the 'FlixHQ' provider
 
 ```http
-  GET /showbox/watch-tv?tmdbId=2316&season=1&episode=1
+  GET /flixhq/watch-tv?tmdbId=2316&season=1&episode=1
 ```
 
 
