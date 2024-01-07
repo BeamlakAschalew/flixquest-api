@@ -1,10 +1,5 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
-import {
-    FastifyRequest,
-    FastifyReply,
-    FastifyInstance,
-    RegisterOptions,
-} from "fastify";
+import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
     fetchM3U8Content,
     fetchMovieData,
@@ -64,22 +59,22 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputFlixhqEmbed.embeds[0].url,
                 });
 
-                if (outputFlixhq?.stream?.type === "hls") {
+                if (outputFlixhq?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputFlixhq.stream.captions.length;
+                        i < outputFlixhq.stream[0].captions.length;
                         i++
                     ) {
                         flixhqSubs.push({
                             lang: langConverter(
-                                outputFlixhq.stream.captions[i].language,
+                                outputFlixhq.stream[0].captions[i].language,
                             ),
-                            url: outputFlixhq.stream.captions[i].url,
+                            url: outputFlixhq.stream[0].captions[i].url,
                         });
                     }
                     flixhqSources.push({
                         quality: "auto",
-                        url: outputFlixhq?.stream.playlist,
+                        url: outputFlixhq?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -104,6 +99,7 @@ const routes = async (fastify: FastifyInstance) => {
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -112,7 +108,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputFlixhq.stream.playlist;
+                    const m3u8Url = outputFlixhq.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -196,22 +192,22 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputFlixhqEmbed.embeds[0].url,
                 });
 
-                if (outputFlixhq?.stream?.type === "hls") {
+                if (outputFlixhq?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputFlixhq.stream.captions.length;
+                        i < outputFlixhq.stream[0].captions.length;
                         i++
                     ) {
                         flixhqSubs.push({
                             lang: langConverter(
-                                outputFlixhq.stream.captions[i].language,
+                                outputFlixhq.stream[0].captions[i].language,
                             ),
-                            url: outputFlixhq.stream.captions[i].url,
+                            url: outputFlixhq.stream[0].captions[i].url,
                         });
                     }
                     flixhqSources.push({
                         quality: "auto",
-                        url: outputFlixhq?.stream.playlist,
+                        url: outputFlixhq?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -236,6 +232,7 @@ const routes = async (fastify: FastifyInstance) => {
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -244,7 +241,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputFlixhq.stream.playlist;
+                    const m3u8Url = outputFlixhq.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -253,6 +250,7 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: flixhqSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

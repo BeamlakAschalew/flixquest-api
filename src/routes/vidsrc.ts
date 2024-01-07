@@ -12,7 +12,7 @@ import { ResolutionStream, SubData } from "../models/types";
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
-            intro: "Welcome to the gomovies provider",
+            intro: "Welcome to the vidsrc provider",
             routes: "/watch-movie " + "/watch-tv",
         });
     });
@@ -45,36 +45,36 @@ const routes = async (fastify: FastifyInstance) => {
                 tmdbId: tmdbId,
             };
 
-            let gomoviesSources: ResolutionStream[] = [];
-            let gomoviesSubs: SubData[] = [];
+            let vidsrcSources: ResolutionStream[] = [];
+            let vidsrcSubs: SubData[] = [];
 
             try {
-                const outputgomoviesEmbed = await providers.runSourceScraper({
+                const outputvidsrcEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "vidsrc",
                 });
 
-                const outputgomovies = await providers.runEmbedScraper({
-                    id: outputgomoviesEmbed.embeds[0].embedId,
-                    url: outputgomoviesEmbed.embeds[0].url,
+                const outputvidsrc = await providers.runEmbedScraper({
+                    id: outputvidsrcEmbed.embeds[0].embedId,
+                    url: outputvidsrcEmbed.embeds[0].url,
                 });
 
-                if (outputgomovies?.stream[0].type === "hls") {
+                if (outputvidsrc?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputgomovies.stream[0].captions.length;
+                        i < outputvidsrc.stream[0].captions.length;
                         i++
                     ) {
-                        gomoviesSubs.push({
+                        vidsrcSubs.push({
                             lang: langConverter(
-                                outputgomovies.stream[0].captions[i].language,
+                                outputvidsrc.stream[0].captions[i].language,
                             ),
-                            url: outputgomovies.stream[0].captions[i].url,
+                            url: outputvidsrc.stream[0].captions[i].url,
                         });
                     }
-                    gomoviesSources.push({
+                    vidsrcSources.push({
                         quality: "auto",
-                        url: outputgomovies?.stream[0].playlist,
+                        url: outputvidsrc?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -92,13 +92,14 @@ const routes = async (fastify: FastifyInstance) => {
                                 const resolution = match[1];
                                 const url = match[2];
                                 matches.push({ resolution, url });
-                                gomoviesSources.push({
+                                vidsrcSources.push({
                                     quality: resolution,
                                     url: url,
                                     isM3U8: true,
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -107,15 +108,16 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputgomovies.stream[0].playlist;
+                    const m3u8Url = outputvidsrc.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
                 reply.status(200).send({
-                    sources: gomoviesSources,
-                    subtitles: gomoviesSubs,
+                    sources: vidsrcSources,
+                    subtitles: vidsrcSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -176,36 +178,36 @@ const routes = async (fastify: FastifyInstance) => {
                 numberOfSeasons: parseInt(numberOfSeasons),
             };
 
-            let gomoviesSources: ResolutionStream[] = [];
-            let gomoviesSubs: SubData[] = [];
+            let vidsrcSources: ResolutionStream[] = [];
+            let vidsrcSubs: SubData[] = [];
 
             try {
-                const outputgomoviesEmbed = await providers.runSourceScraper({
+                const outputvidsrcEmbed = await providers.runSourceScraper({
                     media: media,
-                    id: "gomovies",
+                    id: "vidsrc",
                 });
 
-                const outputgomovies = await providers.runEmbedScraper({
-                    id: outputgomoviesEmbed.embeds[0].embedId,
-                    url: outputgomoviesEmbed.embeds[0].url,
+                const outputvidsrc = await providers.runEmbedScraper({
+                    id: outputvidsrcEmbed.embeds[0].embedId,
+                    url: outputvidsrcEmbed.embeds[0].url,
                 });
 
-                if (outputgomovies?.stream[0].type === "hls") {
+                if (outputvidsrc?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputgomovies.stream[0].captions.length;
+                        i < outputvidsrc.stream[0].captions.length;
                         i++
                     ) {
-                        gomoviesSubs.push({
+                        vidsrcSubs.push({
                             lang: langConverter(
-                                outputgomovies.stream[0].captions[i].language,
+                                outputvidsrc.stream[0].captions[i].language,
                             ),
-                            url: outputgomovies.stream[0].captions[i].url,
+                            url: outputvidsrc.stream[0].captions[i].url,
                         });
                     }
-                    gomoviesSources.push({
+                    vidsrcSources.push({
                         quality: "auto",
-                        url: outputgomovies?.stream[0].playlist,
+                        url: outputvidsrc?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -223,13 +225,14 @@ const routes = async (fastify: FastifyInstance) => {
                                 const resolution = match[1];
                                 const url = match[2];
                                 matches.push({ resolution, url });
-                                gomoviesSources.push({
+                                vidsrcSources.push({
                                     quality: resolution,
                                     url: url,
                                     isM3U8: true,
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -238,15 +241,16 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputgomovies.stream[0].playlist;
+                    const m3u8Url = outputvidsrc.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
                 reply.status(200).send({
-                    sources: gomoviesSources,
-                    subtitles: gomoviesSubs,
+                    sources: vidsrcSources,
+                    subtitles: vidsrcSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

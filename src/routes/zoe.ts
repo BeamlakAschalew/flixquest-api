@@ -59,18 +59,22 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputzoeEmbed.embeds[0].url,
                 });
 
-                if (outputzoe?.stream?.type === "hls") {
-                    for (let i = 0; i < outputzoe.stream.captions.length; i++) {
+                if (outputzoe?.stream[0].type === "hls") {
+                    for (
+                        let i = 0;
+                        i < outputzoe.stream[0].captions.length;
+                        i++
+                    ) {
                         zoeSubs.push({
                             lang: langConverter(
-                                outputzoe.stream.captions[i].language,
+                                outputzoe.stream[0].captions[i].language,
                             ),
-                            url: outputzoe.stream.captions[i].url,
+                            url: outputzoe.stream[0].captions[i].url,
                         });
                     }
                     zoeSources.push({
                         quality: "auto",
-                        url: outputzoe?.stream.playlist,
+                        url: outputzoe?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -103,7 +107,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputzoe.stream.playlist;
+                    const m3u8Url = outputzoe.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -186,18 +190,22 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputzoeEmbed.embeds[0].url,
                 });
 
-                if (outputzoe?.stream?.type === "hls") {
-                    for (let i = 0; i < outputzoe.stream.captions.length; i++) {
+                if (outputzoe?.stream[0].type === "hls") {
+                    for (
+                        let i = 0;
+                        i < outputzoe.stream[0].captions.length;
+                        i++
+                    ) {
                         zoeSubs.push({
                             lang: langConverter(
-                                outputzoe.stream.captions[i].language,
+                                outputzoe.stream[0].captions[i].language,
                             ),
-                            url: outputzoe.stream.captions[i].url,
+                            url: outputzoe.stream[0].captions[i].url,
                         });
                     }
                     zoeSources.push({
                         quality: "auto",
-                        url: outputzoe?.stream.playlist,
+                        url: outputzoe?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -230,7 +238,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputzoe.stream.playlist;
+                    const m3u8Url = outputzoe.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 

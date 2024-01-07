@@ -5,13 +5,14 @@ import {
     fetchTVData,
     langConverter,
     providers,
+    showBoxProviders,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
-            intro: "Welcome to the superstream provider",
+            intro: "Welcome to the showbox/superstream provider",
             routes: ["/watch-movie", "/watch-tv"],
         });
     });
@@ -46,7 +47,7 @@ const routes = async (fastify: FastifyInstance) => {
             let superstreamSubs: SubData[] = [];
 
             try {
-                const outputSuperStream = await providers.runAll({
+                const outputSuperStream = await showBoxProviders.runAll({
                     media: media,
                     embedOrder: ["showbox"],
                 });
@@ -171,7 +172,7 @@ const routes = async (fastify: FastifyInstance) => {
             let superstreamSubs: SubData[] = [];
 
             try {
-                const outputSuperStream = await providers.runAll({
+                const outputSuperStream = await showBoxProviders.runAll({
                     media: media,
                     embedOrder: ["showbox"],
                 });

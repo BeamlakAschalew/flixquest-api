@@ -60,22 +60,23 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputsmashystreamEmbed.embeds[0].url,
                 });
 
-                if (outputsmashystream?.stream?.type === "hls") {
+                if (outputsmashystream?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputsmashystream.stream.captions.length;
+                        i < outputsmashystream.stream[0].captions.length;
                         i++
                     ) {
                         smashystreamSubs.push({
                             lang: langConverter(
-                                outputsmashystream.stream.captions[i].language,
+                                outputsmashystream.stream[0].captions[i]
+                                    .language,
                             ),
-                            url: outputsmashystream.stream.captions[i].url,
+                            url: outputsmashystream.stream[0].captions[i].url,
                         });
                     }
                     smashystreamSources.push({
                         quality: "auto",
-                        url: outputsmashystream?.stream.playlist,
+                        url: outputsmashystream?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -100,6 +101,7 @@ const routes = async (fastify: FastifyInstance) => {
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -108,7 +110,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputsmashystream.stream.playlist;
+                    const m3u8Url = outputsmashystream.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -117,6 +119,7 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: smashystreamSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -192,22 +195,23 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputsmashystreamEmbed.embeds[0].url,
                 });
 
-                if (outputsmashystream?.stream?.type === "hls") {
+                if (outputsmashystream?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputsmashystream.stream.captions.length;
+                        i < outputsmashystream.stream[0].captions.length;
                         i++
                     ) {
                         smashystreamSubs.push({
                             lang: langConverter(
-                                outputsmashystream.stream.captions[i].language,
+                                outputsmashystream.stream[0].captions[i]
+                                    .language,
                             ),
-                            url: outputsmashystream.stream.captions[i].url,
+                            url: outputsmashystream.stream[0].captions[i].url,
                         });
                     }
                     smashystreamSources.push({
                         quality: "auto",
-                        url: outputsmashystream?.stream.playlist,
+                        url: outputsmashystream?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -232,6 +236,7 @@ const routes = async (fastify: FastifyInstance) => {
                                 });
                             }
                         } catch (error) {
+                            console.log(error);
                             reply.status(500).send({
                                 message:
                                     "Something went wrong. Please try again later.",
@@ -240,7 +245,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputsmashystream.stream.playlist;
+                    const m3u8Url = outputsmashystream.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -249,6 +254,7 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: smashystreamSubs,
                 });
             } catch (err) {
+                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

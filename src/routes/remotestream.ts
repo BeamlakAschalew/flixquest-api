@@ -60,22 +60,23 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputremotestreamEmbed.embeds[0].url,
                 });
 
-                if (outputremotestream?.stream?.type === "hls") {
+                if (outputremotestream?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputremotestream.stream.captions.length;
+                        i < outputremotestream.stream[0].captions.length;
                         i++
                     ) {
                         remotestreamSubs.push({
                             lang: langConverter(
-                                outputremotestream.stream.captions[i].language,
+                                outputremotestream.stream[0].captions[i]
+                                    .language,
                             ),
-                            url: outputremotestream.stream.captions[i].url,
+                            url: outputremotestream.stream[0].captions[i].url,
                         });
                     }
                     remotestreamSources.push({
                         quality: "auto",
-                        url: outputremotestream?.stream.playlist,
+                        url: outputremotestream?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -108,7 +109,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputremotestream.stream.playlist;
+                    const m3u8Url = outputremotestream.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 
@@ -192,22 +193,23 @@ const routes = async (fastify: FastifyInstance) => {
                     url: outputremotestreamEmbed.embeds[0].url,
                 });
 
-                if (outputremotestream?.stream?.type === "hls") {
+                if (outputremotestream?.stream[0].type === "hls") {
                     for (
                         let i = 0;
-                        i < outputremotestream.stream.captions.length;
+                        i < outputremotestream.stream[0].captions.length;
                         i++
                     ) {
                         remotestreamSubs.push({
                             lang: langConverter(
-                                outputremotestream.stream.captions[i].language,
+                                outputremotestream.stream[0].captions[i]
+                                    .language,
                             ),
-                            url: outputremotestream.stream.captions[i].url,
+                            url: outputremotestream.stream[0].captions[i].url,
                         });
                     }
                     remotestreamSources.push({
                         quality: "auto",
-                        url: outputremotestream?.stream.playlist,
+                        url: outputremotestream?.stream[0].playlist,
                         isM3U8: true,
                     });
                     async function parseM3U8ContentFromUrl(url: string) {
@@ -240,7 +242,7 @@ const routes = async (fastify: FastifyInstance) => {
                         }
                     }
 
-                    const m3u8Url = outputremotestream.stream.playlist;
+                    const m3u8Url = outputremotestream.stream[0].playlist;
                     await parseM3U8ContentFromUrl(m3u8Url);
                 }
 

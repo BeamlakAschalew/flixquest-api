@@ -18,6 +18,11 @@ export const providers = makeProviders({
     target: targets.BROWSER,
 });
 
+export const showBoxProviders = makeProviders({
+    fetcher: makeStandardFetcher(fetch),
+    target: targets.BROWSER,
+});
+
 export async function fetchM3U8Content(url: string): Promise<string> {
     try {
         const response = await axios.get(url);
