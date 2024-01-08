@@ -8,14 +8,15 @@ Hosted instance: https://flixquest-api.vercel.app
 ## API Reference
 
 #### List of available providers:
-| Name         | Id            |
-| :--------    | :-------      |
-| ShowBox      | `showbox`     |
-| FlixHQ       | `flixhq`      |
-| ZoeChip      | `zoe`         |
-| SmashyStream | `smashystream`|
-| RemoteStream | `remotestream`|
-| Gomovies     | `gomovies`    |
+| Name         | Id            | Status               |
+| :--------    | :-------      | :-------              |
+| ShowBox      | `showbox`     | 🟡 Working partially |   
+| FlixHQ       | `flixhq`      | 🟢 Working           |
+| ZoeChip      | `zoe`         | 🟢 Working           |
+| SmashyStream | `smashystream`| 🔴 Down              |
+| RemoteStream | `remotestream`| 🔴 Down              |
+| Gomovies     | `gomovies`    | 🟢 Working           |
+| VidSrc       | `vidsrc`      | 🟡 Working partially |
 
 
 ### Get all links and subtitles for a movie
@@ -29,10 +30,10 @@ Hosted instance: https://flixquest-api.vercel.app
 ```
 
 #### Example
-Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBox' provider
+Get streaming link and subtitles for the movie 'The Hangover 1' from the 'FlixHQ' provider
 
 ```http
-  GET /showbox/watch-movie?tmdbId=18785
+  GET /flixhq/watch-movie?tmdbId=18785
 ```
 
 ### Get all links and subtitles for an episode
@@ -48,10 +49,10 @@ Get streaming link and subtitles for the movie 'The Hangover 1' from the 'ShowBo
 ```
 
 #### Example
-Get streaming link and subtitles for the TV show 'The Office' from the 'ShowBox' provider
+Get streaming link and subtitles for the TV show 'The Office' from the 'FlixHQ' provider
 
 ```http
-  GET /showbox/watch-tv?tmdbId=2316&season=1&episode=1
+  GET /flixhq/watch-tv?tmdbId=2316&season=1&episode=1
 ```
 
 
