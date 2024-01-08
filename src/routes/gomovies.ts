@@ -5,6 +5,7 @@ import {
     fetchMovieData,
     fetchTVData,
     langConverter,
+    parseM3U8ContentFromUrl,
     providers,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
@@ -77,38 +78,17 @@ const routes = async (fastify: FastifyInstance) => {
                         url: outputgomovies?.stream[0].playlist,
                         isM3U8: true,
                     });
-                    async function parseM3U8ContentFromUrl(url: string) {
-                        try {
-                            const m3u8Content = await fetchM3U8Content(url);
-                            const regex =
-                                /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
-                            const matches: {
-                                resolution: string;
-                                url: string;
-                            }[] = [];
-                            let match;
-
-                            while ((match = regex.exec(m3u8Content)) !== null) {
-                                const resolution = match[1];
-                                const url = match[2];
-                                matches.push({ resolution, url });
-                                gomoviesSources.push({
-                                    quality: resolution,
-                                    url: url,
-                                    isM3U8: true,
-                                });
-                            }
-                        } catch (error) {
-                            reply.status(500).send({
-                                message:
-                                    "Something went wrong. Please try again later.",
-                                error: error,
-                            });
-                        }
-                    }
 
                     const m3u8Url = outputgomovies.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url);
+                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
+                        v?.forEach((r) => {
+                            gomoviesSources.push({
+                                quality: r.resolution,
+                                url: r.url,
+                                isM3U8: r.isM3U8,
+                            });
+                        });
+                    });
                 }
 
                 reply.status(200).send({
@@ -208,38 +188,17 @@ const routes = async (fastify: FastifyInstance) => {
                         url: outputgomovies?.stream[0].playlist,
                         isM3U8: true,
                     });
-                    async function parseM3U8ContentFromUrl(url: string) {
-                        try {
-                            const m3u8Content = await fetchM3U8Content(url);
-                            const regex =
-                                /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
-                            const matches: {
-                                resolution: string;
-                                url: string;
-                            }[] = [];
-                            let match;
-
-                            while ((match = regex.exec(m3u8Content)) !== null) {
-                                const resolution = match[1];
-                                const url = match[2];
-                                matches.push({ resolution, url });
-                                gomoviesSources.push({
-                                    quality: resolution,
-                                    url: url,
-                                    isM3U8: true,
-                                });
-                            }
-                        } catch (error) {
-                            reply.status(500).send({
-                                message:
-                                    "Something went wrong. Please try again later.",
-                                error: error,
-                            });
-                        }
-                    }
 
                     const m3u8Url = outputgomovies.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url);
+                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
+                        v?.forEach((r) => {
+                            gomoviesSources.push({
+                                quality: r.resolution,
+                                url: r.url,
+                                isM3U8: r.isM3U8,
+                            });
+                        });
+                    });
                 }
 
                 reply.status(200).send({

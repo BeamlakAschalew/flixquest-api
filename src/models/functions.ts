@@ -9,6 +9,7 @@ import { workers_url } from "..";
 import dotenv from "dotenv";
 import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
 import { supportedLanguages } from "./types";
+import { FastifyReply } from "fastify";
 dotenv.config();
 
 const proxyUrl = process.env.WORKERS_URL;
@@ -38,6 +39,37 @@ export async function fetchM3U8Content(url: string): Promise<string> {
     }
 }
 
+export async function parseM3U8ContentFromUrl(
+    url: string,
+    reply: FastifyReply,
+) {
+    try {
+        const m3u8Content = await fetchM3U8Content(url);
+        const regex = /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
+        const matches: {
+            resolution: string;
+            url: string;
+            isM3U8: boolean;
+        }[] = [];
+        let match;
+
+        while ((match = regex.exec(m3u8Content)) !== null) {
+            const resolution = match[1];
+            const url = match[2];
+            const isM3U8 = true;
+            matches.push({ resolution, url, isM3U8 });
+        }
+
+        return matches;
+    } catch (error) {
+        console.log(error);
+        reply.status(500).send({
+            message: "Something went wrong. Please try again later.",
+            error: error,
+        });
+    }
+}
+
 export async function fetchMovieData(id: string): Promise<{
     title: string;
     year: number;
@@ -45,8 +77,8 @@ export async function fetchMovieData(id: string): Promise<{
     try {
         const apiUrl = `${tmdbBaseUrl}/3/movie/${id}?language=en-US&api_key=${tmdbKey}`;
         const response = await axios.get(apiUrl);
-        const { title, release_date: releaseDate } = response.data;
-
+        const releaseDate = response.data.release_date;
+        const title = response.data.title;
         const year: number = parseInt(releaseDate.split("-")[0]);
         return { title, year };
     } catch (error) {
@@ -74,7 +106,7 @@ export async function fetchTVData(
 
         const episodes = response.data.episodes;
         const seasonId = response.data.id;
-        const title = resposneGeneral.data.original_name;
+        const title = resposneGeneral.data.name;
         const year = parseInt(
             resposneGeneral.data.first_air_date.split("-")[0],
         );
