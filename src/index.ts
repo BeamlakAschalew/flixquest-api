@@ -45,11 +45,6 @@ export const tmdbKey = process.env.TMDB_KEY && process.env.TMDB_KEY;
 
     try {
         fastify.get("/", async (_, rp) => {
-            console.log(
-                providers.listSources().forEach((e) => {
-                    console.log(e.id);
-                }),
-            );
             rp.status(200).send("Welcome to FlixQuest API! 🎉");
         });
         fastify.get("*", (request, reply) => {
