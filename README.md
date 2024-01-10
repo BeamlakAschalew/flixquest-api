@@ -110,7 +110,8 @@ Host your own instance of FlixQuest API on Render using the button below.
 
 `WORKERS_URL` (Optional) : A proxy URL that'll be used while making a GET request (used only if `proxied` is true or if `proxied` is left unprovided).
 
-You can get Cloudflare proxy at https://workers.cloudflare.com/
+You can get Cloudflare proxy at https://workers.cloudflare.com/<br>
+Or deploy your own custom proxy from [here](https://github.com/movie-web/simple-proxy) and place the endpoint in `WORKERS_URL` 
 
 
 ## Credits
