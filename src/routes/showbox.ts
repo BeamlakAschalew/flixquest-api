@@ -5,7 +5,6 @@ import {
     fetchTVData,
     langConverter,
     providers,
-    showBoxProviders,
 } from "../models/functions";
 import { ResolutionStream, SubData } from "../models/types";
 
@@ -21,6 +20,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -47,7 +48,10 @@ const routes = async (fastify: FastifyInstance) => {
             let superstreamSubs: SubData[] = [];
 
             try {
-                const outputSuperStream = await showBoxProviders.runAll({
+                const outputSuperStream = await providers(
+                    proxied,
+                    reply,
+                ).runAll({
                     media: media,
                     embedOrder: ["showbox"],
                 });
@@ -122,6 +126,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -172,7 +177,10 @@ const routes = async (fastify: FastifyInstance) => {
             let superstreamSubs: SubData[] = [];
 
             try {
-                const outputSuperStream = await showBoxProviders.runAll({
+                const outputSuperStream = await providers(
+                    proxied,
+                    reply,
+                ).runAll({
                     media: media,
                     embedOrder: ["showbox"],
                 });

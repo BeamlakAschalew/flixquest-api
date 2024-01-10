@@ -1,7 +1,6 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
-    fetchM3U8Content,
     fetchMovieData,
     fetchTVData,
     langConverter,
@@ -24,7 +23,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
-            const useProxy = (request.query as { proxy: string }).proxy;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -51,12 +51,18 @@ const routes = async (fastify: FastifyInstance) => {
             let flixhqSubs: SubData[] = [];
 
             try {
-                const outputFlixhqEmbed = await providers.runSourceScraper({
+                const outputFlixhqEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "flixhq",
                 });
 
-                const outputFlixhq = await providers.runEmbedScraper({
+                const outputFlixhq = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputFlixhqEmbed.embeds[0].embedId,
                     url: outputFlixhqEmbed.embeds[0].url,
                 });
@@ -96,7 +102,6 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: flixhqSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -111,6 +116,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -161,12 +167,18 @@ const routes = async (fastify: FastifyInstance) => {
             let flixhqSubs: SubData[] = [];
 
             try {
-                const outputFlixhqEmbed = await providers.runSourceScraper({
+                const outputFlixhqEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "flixhq",
                 });
 
-                const outputFlixhq = await providers.runEmbedScraper({
+                const outputFlixhq = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputFlixhqEmbed.embeds[0].embedId,
                     url: outputFlixhqEmbed.embeds[0].url,
                 });
@@ -206,7 +218,6 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: flixhqSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

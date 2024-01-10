@@ -20,7 +20,11 @@ export const tmdbKey = process.env.TMDB_KEY && process.env.TMDB_KEY;
 
     console.log(chalk.green(`Starting server on port ${PORT}... 🚀`));
     if (!process.env.WORKERS_URL)
-        console.warn(chalk.yellowBright("Workers url not found"));
+        console.warn(
+            chalk.yellowBright(
+                "Workers (proxy) url not found use `proxied=false` argument in link fetching",
+            ),
+        );
 
     if (!process.env.TMDB_KEY)
         console.warn(chalk.yellowBright("TMDB key not found"));

@@ -1,7 +1,7 @@
 {
-  "name": "fastify-test",
-  "version": "1.0.0",
-  "description": "",
+  "name": "flixquest-api",
+  "version": "1.0.1",
+  "description": "A node app that uses @movie-web/providers to scrape streaming sites",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",

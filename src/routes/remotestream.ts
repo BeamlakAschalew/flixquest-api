@@ -1,7 +1,6 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
-    fetchM3U8Content,
     fetchMovieData,
     fetchTVData,
     langConverter,
@@ -24,6 +23,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -50,13 +51,18 @@ const routes = async (fastify: FastifyInstance) => {
             let remotestreamSubs: SubData[] = [];
 
             try {
-                const outputremotestreamEmbed =
-                    await providers.runSourceScraper({
-                        media: media,
-                        id: "remotestream",
-                    });
+                const outputremotestreamEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
+                    media: media,
+                    id: "remotestream",
+                });
 
-                const outputremotestream = await providers.runEmbedScraper({
+                const outputremotestream = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputremotestreamEmbed.embeds[0].embedId,
                     url: outputremotestreamEmbed.embeds[0].url,
                 });
@@ -112,6 +118,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -162,13 +169,18 @@ const routes = async (fastify: FastifyInstance) => {
             let remotestreamSubs: SubData[] = [];
 
             try {
-                const outputremotestreamEmbed =
-                    await providers.runSourceScraper({
-                        media: media,
-                        id: "remotestream",
-                    });
+                const outputremotestreamEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
+                    media: media,
+                    id: "remotestream",
+                });
 
-                const outputremotestream = await providers.runEmbedScraper({
+                const outputremotestream = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputremotestreamEmbed.embeds[0].embedId,
                     url: outputremotestreamEmbed.embeds[0].url,
                 });

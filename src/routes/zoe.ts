@@ -24,6 +24,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -50,12 +52,18 @@ const routes = async (fastify: FastifyInstance) => {
             let zoeSubs: SubData[] = [];
 
             try {
-                const outputzoeEmbed = await providers.runSourceScraper({
+                const outputzoeEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "zoechip",
                 });
 
-                const outputzoe = await providers.runEmbedScraper({
+                const outputzoe = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputzoeEmbed.embeds[0].embedId,
                     url: outputzoeEmbed.embeds[0].url,
                 });
@@ -110,6 +118,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -160,12 +169,18 @@ const routes = async (fastify: FastifyInstance) => {
             let zoeSubs: SubData[] = [];
 
             try {
-                const outputzoeEmbed = await providers.runSourceScraper({
+                const outputzoeEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "zoechip",
                 });
 
-                const outputzoe = await providers.runEmbedScraper({
+                const outputzoe = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputzoeEmbed.embeds[0].embedId,
                     url: outputzoeEmbed.embeds[0].url,
                 });

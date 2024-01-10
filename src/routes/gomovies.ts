@@ -24,6 +24,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -50,12 +52,18 @@ const routes = async (fastify: FastifyInstance) => {
             let gomoviesSubs: SubData[] = [];
 
             try {
-                const outputgomoviesEmbed = await providers.runSourceScraper({
+                const outputgomoviesEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "gomovies",
                 });
 
-                const outputgomovies = await providers.runEmbedScraper({
+                const outputgomovies = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputgomoviesEmbed.embeds[0].embedId,
                     url: outputgomoviesEmbed.embeds[0].url,
                 });
@@ -110,6 +118,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -160,12 +169,18 @@ const routes = async (fastify: FastifyInstance) => {
             let gomoviesSubs: SubData[] = [];
 
             try {
-                const outputgomoviesEmbed = await providers.runSourceScraper({
+                const outputgomoviesEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
                     media: media,
                     id: "gomovies",
                 });
 
-                const outputgomovies = await providers.runEmbedScraper({
+                const outputgomovies = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputgomoviesEmbed.embeds[0].embedId,
                     url: outputgomoviesEmbed.embeds[0].url,
                 });

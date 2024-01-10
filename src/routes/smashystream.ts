@@ -24,6 +24,8 @@ const routes = async (fastify: FastifyInstance) => {
         "/watch-movie",
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
+            const proxied = (request.query as { proxied: string }).proxied;
+
             let releaseYear: string = "";
             let title: string = "";
 
@@ -50,13 +52,18 @@ const routes = async (fastify: FastifyInstance) => {
             let smashystreamSubs: SubData[] = [];
 
             try {
-                const outputsmashystreamEmbed =
-                    await providers.runSourceScraper({
-                        media: media,
-                        id: "smashystream",
-                    });
+                const outputsmashystreamEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
+                    media: media,
+                    id: "smashystream",
+                });
 
-                const outputsmashystream = await providers.runEmbedScraper({
+                const outputsmashystream = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputsmashystreamEmbed.embeds[0].embedId,
                     url: outputsmashystreamEmbed.embeds[0].url,
                 });
@@ -98,7 +105,6 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: smashystreamSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,
@@ -113,6 +119,7 @@ const routes = async (fastify: FastifyInstance) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
+            const proxied = (request.query as { proxied: string }).proxied;
 
             let title: string = "";
             let episodeId: string = "";
@@ -163,13 +170,18 @@ const routes = async (fastify: FastifyInstance) => {
             let smashystreamSubs: SubData[] = [];
 
             try {
-                const outputsmashystreamEmbed =
-                    await providers.runSourceScraper({
-                        media: media,
-                        id: "smashystream",
-                    });
+                const outputsmashystreamEmbed = await providers(
+                    proxied,
+                    reply,
+                ).runSourceScraper({
+                    media: media,
+                    id: "smashystream",
+                });
 
-                const outputsmashystream = await providers.runEmbedScraper({
+                const outputsmashystream = await providers(
+                    proxied,
+                    reply,
+                ).runEmbedScraper({
                     id: outputsmashystreamEmbed.embeds[0].embedId,
                     url: outputsmashystreamEmbed.embeds[0].url,
                 });
@@ -211,7 +223,6 @@ const routes = async (fastify: FastifyInstance) => {
                     subtitles: smashystreamSubs,
                 });
             } catch (err) {
-                console.log(err);
                 reply.status(500).send({
                     message: "Something went wrong. Please try again later.",
                     error: err,

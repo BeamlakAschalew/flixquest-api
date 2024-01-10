@@ -3,26 +3,44 @@ import {
     makeStandardFetcher,
     makeSimpleProxyFetcher,
     targets,
+    ProviderMakerOptions,
 } from "@movie-web/providers";
 import axios, { AxiosError } from "axios";
-import { workers_url } from "..";
 import dotenv from "dotenv";
 import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
 import { supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
 dotenv.config();
-
 const proxyUrl = process.env.WORKERS_URL;
-export const providers = makeProviders({
-    fetcher: makeStandardFetcher(fetch),
-    proxiedFetcher: makeSimpleProxyFetcher(proxyUrl || proxyUrl || "", fetch),
-    target: targets.BROWSER,
-});
 
-export const showBoxProviders = makeProviders({
-    fetcher: makeStandardFetcher(fetch),
-    target: targets.BROWSER,
-});
+export const providers = (useProxy: string, reply: FastifyReply) => {
+    let config: ProviderMakerOptions = {
+        fetcher: makeStandardFetcher(fetch),
+        target: targets.ANY,
+        consistentIpForRequests: false,
+    };
+
+    if (useProxy === "true" || typeof useProxy === "undefined") {
+        if (typeof proxyUrl === "undefined" || proxyUrl === "") {
+            reply.status(500).send({
+                message:
+                    "No proxy (workers) URL found in environment variables use `proxied=false` to fetch without a proxy",
+            });
+        }
+        config = {
+            ...config,
+            proxiedFetcher: makeSimpleProxyFetcher(
+                proxyUrl || proxyUrl || "",
+                fetch,
+            ),
+        };
+    } else if (useProxy !== "false") {
+        reply.status(500).send({
+            message: "Invalid 'proxied' argument",
+        });
+    }
+    return makeProviders(config);
+};
 
 export async function fetchM3U8Content(url: string): Promise<string> {
     try {
@@ -62,7 +80,6 @@ export async function parseM3U8ContentFromUrl(
 
         return matches;
     } catch (error) {
-        console.log(error);
         reply.status(500).send({
             message: "Something went wrong. Please try again later.",
             error: error,
