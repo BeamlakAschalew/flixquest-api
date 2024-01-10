@@ -8,7 +8,7 @@
 <p align="center">REST API that fetches streaming links of movies and TV shows based on TMDB id using @movie-web/providers package</p>
 
 <p align="center"><a src="https://github.com/BeamlakAschalew/flixquest-api/actions/workflows/node.js.yml"><img src="https://github.com/BeamlakAschalew/flixquest-api/actions/workflows/node.js.yml/badge.svg" alt="Node build badge"></a>
-
+<a src="https://github.com/BeamlakAschalew/flixquest-api/blob/main/LICENSE"><img src="https://img.shields.io/github/license/BeamlakAschalew/flixquest-api"></img></a>
 </p>
 
 Hosted instance: https://flixquest-api.vercel.app
@@ -17,15 +17,15 @@ Hosted instance: https://flixquest-api.vercel.app
 
 #### List of available providers:
 
-| Name         | Id             | Status                                   |
-| :----------- | :------------- | :--------------------------------------- |
-| ShowBox      | `showbox`      | 🟢 Working <br>(without CloudFlare proxy) |
-| FlixHQ       | `flixhq`       | 🟢 Working                                |
-| ZoeChip      | `zoe`          | 🟢 Working                                |
-| SmashyStream | `smashystream` | 🟢 Working                                |
-| RemoteStream | `remotestream` | 🔴 Down                                   |
-| Gomovies     | `gomovies`     | 🟢 Working                                |
-| VidSrc       | `vidsrc`       | 🟡 Working partially                      |
+| Name         | Id             | Status                               |
+| :----------- | :------------- | :----------------------------------- |
+| ShowBox      | `showbox`      | 🟢 200 <br>(without CloudFlare proxy) |
+| FlixHQ       | `flixhq`       | 🟢 200                                |
+| ZoeChip      | `zoe`          | 🟢 200                                |
+| SmashyStream | `smashystream` | 🟢 200                                |
+| RemoteStream | `remotestream` | 🔴 500                                |
+| Gomovies     | `gomovies`     | 🟢 200                                |
+| VidSrc       | `vidsrc`       | 🟡 207                                |
 
 ### Get all links and subtitles for a movie
 
