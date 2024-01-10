@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="https://consumet.org/">
     <img alt="Consumet" src="https://raw.githubusercontent.com/BeamlakAschalew/beamlakaschalew.github.io/main/cinemax/res/assets/images/logo.png" width="150">
-  </a>
 </p>
 <h1 align="center">FlixQuest API</h1>
 
