@@ -1,14 +1,10 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
-    fetchM3U8Content,
+    fetchHlsLinks,
     fetchMovieData,
     fetchTVData,
-    langConverter,
-    parseM3U8ContentFromUrl,
-    providers,
 } from "../models/functions";
-import { ResolutionStream, SubData } from "../models/types";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
@@ -48,68 +44,7 @@ const routes = async (fastify: FastifyInstance) => {
                 tmdbId: tmdbId,
             };
 
-            let smashystreamSources: ResolutionStream[] = [];
-            let smashystreamSubs: SubData[] = [];
-
-            try {
-                const outputsmashystreamEmbed = await providers(
-                    proxied,
-                    reply,
-                ).runSourceScraper({
-                    media: media,
-                    id: "smashystream",
-                });
-
-                const outputsmashystream = await providers(
-                    proxied,
-                    reply,
-                ).runEmbedScraper({
-                    id: outputsmashystreamEmbed.embeds[0].embedId,
-                    url: outputsmashystreamEmbed.embeds[0].url,
-                });
-
-                if (outputsmashystream?.stream[0].type === "hls") {
-                    for (
-                        let i = 0;
-                        i < outputsmashystream.stream[0].captions.length;
-                        i++
-                    ) {
-                        smashystreamSubs.push({
-                            lang: langConverter(
-                                outputsmashystream.stream[0].captions[i]
-                                    .language,
-                            ),
-                            url: outputsmashystream.stream[0].captions[i].url,
-                        });
-                    }
-                    smashystreamSources.push({
-                        quality: "auto",
-                        url: outputsmashystream?.stream[0].playlist,
-                        isM3U8: true,
-                    });
-
-                    const m3u8Url = outputsmashystream.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
-                        v?.forEach((r) => {
-                            smashystreamSources.push({
-                                quality: r.resolution,
-                                url: r.url,
-                                isM3U8: r.isM3U8,
-                            });
-                        });
-                    });
-                }
-
-                reply.status(200).send({
-                    sources: smashystreamSources,
-                    subtitles: smashystreamSubs,
-                });
-            } catch (err) {
-                reply.status(500).send({
-                    message: "Something went wrong. Please try again later.",
-                    error: err,
-                });
-            }
+            await fetchHlsLinks(proxied, reply, media, "smashystream");
         },
     );
 
@@ -166,68 +101,7 @@ const routes = async (fastify: FastifyInstance) => {
                 numberOfSeasons: parseInt(numberOfSeasons),
             };
 
-            let smashystreamSources: ResolutionStream[] = [];
-            let smashystreamSubs: SubData[] = [];
-
-            try {
-                const outputsmashystreamEmbed = await providers(
-                    proxied,
-                    reply,
-                ).runSourceScraper({
-                    media: media,
-                    id: "smashystream",
-                });
-
-                const outputsmashystream = await providers(
-                    proxied,
-                    reply,
-                ).runEmbedScraper({
-                    id: outputsmashystreamEmbed.embeds[0].embedId,
-                    url: outputsmashystreamEmbed.embeds[0].url,
-                });
-
-                if (outputsmashystream?.stream[0].type === "hls") {
-                    for (
-                        let i = 0;
-                        i < outputsmashystream.stream[0].captions.length;
-                        i++
-                    ) {
-                        smashystreamSubs.push({
-                            lang: langConverter(
-                                outputsmashystream.stream[0].captions[i]
-                                    .language,
-                            ),
-                            url: outputsmashystream.stream[0].captions[i].url,
-                        });
-                    }
-                    smashystreamSources.push({
-                        quality: "auto",
-                        url: outputsmashystream?.stream[0].playlist,
-                        isM3U8: true,
-                    });
-
-                    const m3u8Url = outputsmashystream.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
-                        v?.forEach((r) => {
-                            smashystreamSources.push({
-                                quality: r.resolution,
-                                url: r.url,
-                                isM3U8: r.isM3U8,
-                            });
-                        });
-                    });
-                }
-
-                reply.status(200).send({
-                    sources: smashystreamSources,
-                    subtitles: smashystreamSubs,
-                });
-            } catch (err) {
-                reply.status(500).send({
-                    message: "Something went wrong. Please try again later.",
-                    error: err,
-                });
-            }
+            await fetchHlsLinks(proxied, reply, media, "smashystream");
         },
     );
 };

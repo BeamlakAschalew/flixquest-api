@@ -4,11 +4,13 @@ import {
     makeSimpleProxyFetcher,
     targets,
     ProviderMakerOptions,
+    ShowMedia,
+    MovieMedia,
 } from "@movie-web/providers";
 import axios, { AxiosError } from "axios";
 import dotenv from "dotenv";
 import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
-import { supportedLanguages } from "./types";
+import { ResolutionStream, SubData, supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
 import { redis } from "../index";
 import cache from "../utils/cache";
@@ -16,7 +18,7 @@ import Redis from "ioredis";
 dotenv.config();
 const proxyUrl = process.env.WORKERS_URL;
 
-export const providers = (useProxy: string, reply: FastifyReply) => {
+const providers = (useProxy: string, reply: FastifyReply) => {
     let config: ProviderMakerOptions = {
         fetcher: makeStandardFetcher(fetch),
         target: targets.ANY,
@@ -45,7 +47,7 @@ export const providers = (useProxy: string, reply: FastifyReply) => {
     return makeProviders(config);
 };
 
-export async function fetchM3U8Content(url: string): Promise<string> {
+async function fetchM3U8Content(url: string): Promise<string> {
     try {
         const response = await axios.get(url);
         return response.data;
@@ -60,10 +62,7 @@ export async function fetchM3U8Content(url: string): Promise<string> {
     }
 }
 
-export async function parseM3U8ContentFromUrl(
-    url: string,
-    reply: FastifyReply,
-) {
+async function parseM3U8ContentFromUrl(url: string, reply: FastifyReply) {
     try {
         const m3u8Content = await fetchM3U8Content(url);
         const regex = /RESOLUTION=\d+x(\d+)[\s\S]*?(https:\/\/[^\s]+)/g;
@@ -103,14 +102,6 @@ export async function fetchMovieData(id: string): Promise<{
             const title = response.data.title;
             const year: number = parseInt(releaseDate.split("-")[0]);
             const dataToCache = { title, year };
-            if (redis)
-                await cache.set(
-                    redis as Redis,
-                    key,
-                    () => dataToCache,
-                    15 * 24 * 60 * 60,
-                );
-
             return dataToCache;
         } catch (error) {
             throw new Error("Error fetching TMDB data:," + error);
@@ -122,7 +113,7 @@ export async function fetchMovieData(id: string): Promise<{
         : await fetchData();
 }
 
-export async function fetchTVPrimaryData(
+async function fetchTVPrimaryData(
     id: string,
 ): Promise<{ title: string; year: number; numberOfSeasons: number }> {
     const key = `tmdb-tv-info:${id}`;
@@ -200,7 +191,7 @@ export async function fetchTVData(
         : await fetchData();
 }
 
-export function langConverter(short: string) {
+function langConverter(short: string) {
     for (let i = 0; i < supportedLanguages.length; i++) {
         if (short === supportedLanguages[i].shortCode) {
             return supportedLanguages[i].longName;
@@ -208,4 +199,162 @@ export function langConverter(short: string) {
     }
 
     return short;
+}
+
+export async function fetchHlsLinks(
+    proxied: string,
+    reply: FastifyReply,
+    media: ShowMedia | MovieMedia,
+    provider: string,
+) {
+    let key = `${provider}`;
+    media.type === "show"
+        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        : (key += `:movie:${media.tmdbId}`);
+
+    const fetchLinks = async () => {
+        let videoSources: ResolutionStream[] = [];
+        let subSources: SubData[] = [];
+
+        try {
+            const outputEmbed = await providers(
+                proxied,
+                reply,
+            ).runSourceScraper({
+                media: media,
+                id: provider,
+            });
+
+            const output = await providers(proxied, reply).runEmbedScraper({
+                id: outputEmbed.embeds[0].embedId,
+                url: outputEmbed.embeds[0].url,
+            });
+
+            if (output?.stream[0].type === "hls") {
+                for (let i = 0; i < output.stream[0].captions.length; i++) {
+                    subSources.push({
+                        lang: langConverter(
+                            output.stream[0].captions[i].language,
+                        ),
+                        url: output.stream[0].captions[i].url,
+                    });
+                }
+                videoSources.push({
+                    quality: "auto",
+                    url: output?.stream[0].playlist,
+                    isM3U8: true,
+                });
+                const m3u8Url = output.stream[0].playlist;
+                await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
+                    v?.forEach((r) => {
+                        videoSources.push({
+                            quality: r.resolution,
+                            url: r.url,
+                            isM3U8: r.isM3U8,
+                        });
+                    });
+                });
+            }
+
+            const dataToCache = {
+                referrer: outputEmbed.embeds[0].url,
+                server: outputEmbed.embeds[0].embedId,
+                sources: videoSources,
+                subtitles: subSources,
+            };
+
+            return dataToCache;
+        } catch (err) {
+            throw Error(err as string);
+        }
+    };
+
+    let res = redis
+        ? await cache.fetch(redis, key, fetchLinks, 15 * 24 * 60 * 60)
+        : await fetchLinks();
+
+    reply.status(200).send(res);
+}
+
+export async function fetchDash(
+    proxied: string,
+    reply: FastifyReply,
+    media: ShowMedia | MovieMedia,
+    provider: string,
+) {
+    let key = `${provider}`;
+    media.type === "show"
+        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        : (key += `:movie:${media.tmdbId}`);
+
+    const fetchLinks = async () => {
+        let videoSources: ResolutionStream[] = [];
+        let subSources: SubData[] = [];
+
+        try {
+            const output = await providers(proxied, reply).runAll({
+                media: media,
+                embedOrder: [provider],
+            });
+
+            if (output?.stream?.type === "file") {
+                if (output.stream.qualities[1080] != undefined) {
+                    videoSources.push({
+                        quality: "1080",
+                        url: output.stream.qualities[1080].url,
+                        isM3U8: false,
+                    });
+                }
+                if (output.stream.qualities[720] != undefined) {
+                    videoSources.push({
+                        quality: "720",
+                        url: output.stream.qualities[720].url,
+                        isM3U8: false,
+                    });
+                }
+                if (output.stream.qualities[480] != undefined) {
+                    videoSources.push({
+                        quality: "480",
+                        url: output.stream.qualities[480].url,
+                        isM3U8: false,
+                    });
+                }
+                if (output.stream.qualities[360] != undefined) {
+                    videoSources.push({
+                        quality: "360",
+                        url: output.stream.qualities[360].url,
+                        isM3U8: false,
+                    });
+                }
+
+                for (let i = 0; i < output.stream.captions.length; i++) {
+                    subSources.push({
+                        lang: langConverter(output.stream.captions[i].language),
+                        url: output.stream.captions[i].url,
+                    });
+                }
+            }
+            console.log("VIDEO LENGTH" + videoSources.length);
+
+            if (videoSources.length === 0) {
+                throw Error("NotFoundError");
+            }
+
+            const dataToCache = {
+                server: output?.sourceId,
+                sources: videoSources,
+                subtitles: subSources,
+            };
+
+            return dataToCache;
+        } catch (err) {
+            throw Error(err as string);
+        }
+    };
+
+    let res = redis
+        ? await cache.fetch(redis, key, fetchLinks, 15 * 24 * 60 * 60)
+        : await fetchLinks();
+
+    reply.status(200).send(res);
 }
