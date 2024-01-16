@@ -10,6 +10,9 @@ import dotenv from "dotenv";
 import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
 import { supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
+import { redis } from "../index";
+import cache from "../utils/cache";
+import Redis from "ioredis";
 dotenv.config();
 const proxyUrl = process.env.WORKERS_URL;
 
@@ -91,16 +94,61 @@ export async function fetchMovieData(id: string): Promise<{
     title: string;
     year: number;
 } | null> {
-    try {
+    const key = `tmdb-movie:${id}`;
+    const fetchData = async () => {
         const apiUrl = `${tmdbBaseUrl}/3/movie/${id}?language=en-US&api_key=${tmdbKey}`;
-        const response = await axios.get(apiUrl);
-        const releaseDate = response.data.release_date;
-        const title = response.data.title;
-        const year: number = parseInt(releaseDate.split("-")[0]);
-        return { title, year };
-    } catch (error) {
-        throw new Error("Error fetching TMDB data:," + error);
-    }
+        try {
+            const response = await axios.get(apiUrl);
+            const releaseDate = response.data.release_date;
+            const title = response.data.title;
+            const year: number = parseInt(releaseDate.split("-")[0]);
+            const dataToCache = { title, year };
+            if (redis)
+                await cache.set(
+                    redis as Redis,
+                    key,
+                    () => dataToCache,
+                    15 * 24 * 60 * 60,
+                );
+
+            return dataToCache;
+        } catch (error) {
+            throw new Error("Error fetching TMDB data:," + error);
+        }
+    };
+
+    return redis
+        ? await cache.fetch(redis, key, fetchData, 60 * 60 * 6)
+        : await fetchData();
+}
+
+export async function fetchTVPrimaryData(
+    id: string,
+): Promise<{ title: string; year: number; numberOfSeasons: number }> {
+    const key = `tmdb-tv-info:${id}`;
+    const fetchTVData = async () => {
+        try {
+            const apiUrlGeneral = `${tmdbBaseUrl}/3/tv/${id}?language=en-US&api_key=${tmdbKey}`;
+            const resposneGeneral = await axios.get(apiUrlGeneral);
+            const title = resposneGeneral.data.name;
+            const year = parseInt(
+                resposneGeneral.data.first_air_date.split("-")[0],
+            );
+            const numberOfSeasons = resposneGeneral.data.number_of_seasons;
+            const dataToCache = {
+                title,
+                year,
+                numberOfSeasons,
+            };
+            return dataToCache;
+        } catch (error) {
+            throw new Error("Error fetching TMDB data:," + error);
+        }
+    };
+
+    return redis
+        ? await cache.fetch(redis, key, fetchTVData, 15 * 24 * 60 * 60)
+        : await fetchTVData();
 }
 
 export async function fetchTVData(
@@ -113,32 +161,43 @@ export async function fetchTVData(
     seasonId: number;
     year: number;
     numberOfSeasons: number;
-} | null> {
-    try {
-        const apiUrlSeason = `${tmdbBaseUrl}/3/tv/${id}/season/${seasonNum}?language=en-US&api_key=${tmdbKey}`;
-        const apiUrlGeneral = `${tmdbBaseUrl}/3/tv/${id}?language=en-US&api_key=${tmdbKey}`;
+}> {
+    const key = `tmdb-tv:${id}:${episodeNum}:${seasonNum}`;
+    const fetchData = async () => {
+        try {
+            const apiUrlSeason = `${tmdbBaseUrl}/3/tv/${id}/season/${seasonNum}?language=en-US&api_key=${tmdbKey}`;
 
-        const response = await axios.get(apiUrlSeason);
-        const resposneGeneral = await axios.get(apiUrlGeneral);
+            const response = await axios.get(apiUrlSeason);
+            const resposneGeneral = await fetchTVPrimaryData(id);
 
-        const episodes = response.data.episodes;
-        const seasonId = response.data.id;
-        const title = resposneGeneral.data.name;
-        const year = parseInt(
-            resposneGeneral.data.first_air_date.split("-")[0],
-        );
-        const numberOfSeasons = resposneGeneral.data.number_of_seasons;
-        const episodeIndex = parseInt(episodeNum) - 1;
+            const episodes = response.data.episodes;
+            const seasonId = response.data.id;
+            const title = resposneGeneral.title;
+            const year = resposneGeneral?.year;
+            const numberOfSeasons = resposneGeneral?.numberOfSeasons;
+            const episodeIndex = parseInt(episodeNum) - 1;
 
-        if (episodeIndex >= 0 && episodeIndex < episodes.length) {
-            const { id: episodeId } = episodes[episodeIndex];
-            return { title, episodeId, seasonId, year, numberOfSeasons };
-        } else {
-            throw new Error("Invalid episode number");
+            if (episodeIndex >= 0 && episodeIndex < episodes.length) {
+                const { id: episodeId } = episodes[episodeIndex];
+                const dataToCache = {
+                    title,
+                    episodeId,
+                    seasonId,
+                    year,
+                    numberOfSeasons,
+                };
+                return dataToCache;
+            } else {
+                throw new Error("Invalid episode number");
+            }
+        } catch (error) {
+            throw new Error("Error fetching TMDB data:," + error);
         }
-    } catch (error) {
-        throw new Error("Error fetching TMDB data:," + error);
-    }
+    };
+
+    return redis
+        ? await cache.fetch(redis, key, fetchData, 15 * 24 * 60 * 60)
+        : await fetchData();
 }
 
 export function langConverter(short: string) {
