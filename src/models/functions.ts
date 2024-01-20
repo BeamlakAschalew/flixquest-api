@@ -210,7 +210,7 @@ export async function fetchHlsLinks(
 ) {
     let key = `${provider}`;
     media.type === "show"
-        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        ? (key += `:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
         : (key += `:movie:${media.tmdbId}`);
 
     const fetchLinks = async () => {
@@ -285,7 +285,7 @@ export async function fetchDash(
 ) {
     let key = `${provider}`;
     media.type === "show"
-        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        ? (key += `:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
         : (key += `:movie:${media.tmdbId}`);
 
     const fetchLinks = async () => {
