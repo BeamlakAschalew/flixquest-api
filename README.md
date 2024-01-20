@@ -113,6 +113,12 @@ Host your own instance of FlixQuest API on Render using the button below.
 You can get Cloudflare proxy at https://workers.cloudflare.com/<br>
 Or deploy your own custom proxy from [here](https://github.com/movie-web/simple-proxy) and place the endpoint in `WORKERS_URL` 
 
+You can cache data that comes from TMDB and from the providers if you have a [Redis](https://redis.com) database:
+
+`REDIS_HOST` URL of your Redis database<br>
+`REDIS_PASSWORD` password of your database<br>
+`REDIS_PORT` port of your database connection
+
 
 ## Credits
 Most of the code of this script is based on [Consumet API](https://github.com/consumet/api.consumet.org/)<br>
