@@ -6,6 +6,7 @@ import {
     ProviderMakerOptions,
     ShowMedia,
     MovieMedia,
+    NotFoundError,
 } from "@movie-web/providers";
 import axios, { AxiosError } from "axios";
 import dotenv from "dotenv";
@@ -109,7 +110,7 @@ export async function fetchMovieData(id: string): Promise<{
     };
 
     return redis
-        ? await cache.fetch(redis, key, fetchData, 60 * 60 * 6)
+        ? await cache.fetch(redis, key, fetchData, 15 * 24 * 60 * 60)
         : await fetchData();
 }
 
@@ -265,7 +266,7 @@ export async function fetchHlsLinks(
 
             return dataToCache;
         } catch (err) {
-            throw Error(err as string);
+            throw new NotFoundError();
         }
     };
 
@@ -334,10 +335,9 @@ export async function fetchDash(
                     });
                 }
             }
-            console.log("VIDEO LENGTH" + videoSources.length);
 
             if (videoSources.length === 0) {
-                throw Error("NotFoundError");
+                throw new NotFoundError("Source empty");
             }
 
             const dataToCache = {
@@ -348,7 +348,7 @@ export async function fetchDash(
 
             return dataToCache;
         } catch (err) {
-            throw Error(err as string);
+            throw new NotFoundError();
         }
     };
 
@@ -358,3 +358,5 @@ export async function fetchDash(
 
     reply.status(200).send(res);
 }
+
+//TODO: add try catch blocks to callers

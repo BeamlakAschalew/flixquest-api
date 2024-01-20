@@ -30,21 +30,28 @@ const routes = async (fastify: FastifyInstance) => {
                     .status(400)
                     .send({ message: "tmdb id is required" });
 
-            await fetchMovieData(tmdbId).then((data) => {
-                if (data) {
-                    releaseYear = data?.year.toString();
-                    title = data?.title;
-                }
-            });
+            try {
+                await fetchMovieData(tmdbId).then((data) => {
+                    if (data) {
+                        releaseYear = data?.year.toString();
+                        title = data?.title;
+                    }
+                });
 
-            const media: MovieMedia = {
-                type: "movie",
-                title: title,
-                releaseYear: parseInt(releaseYear),
-                tmdbId: tmdbId,
-            };
+                const media: MovieMedia = {
+                    type: "movie",
+                    title: title,
+                    releaseYear: parseInt(releaseYear),
+                    tmdbId: tmdbId,
+                };
 
-            await fetchHlsLinks(proxied, reply, media, "smashystream");
+                await fetchHlsLinks(proxied, reply, media, "smashystream");
+            } catch (error) {
+                reply.status(500).send({
+                    message: "Something went wrong. Please try again",
+                    error: error,
+                });
+            }
         },
     );
 
@@ -75,33 +82,40 @@ const routes = async (fastify: FastifyInstance) => {
                     message: "season is required",
                 });
 
-            await fetchTVData(tmdbId, season, episode).then((data) => {
-                if (data) {
-                    title = data?.title;
-                    episodeId = data?.episodeId.toString();
-                    seasonId = data?.seasonId.toString();
-                    releaseYear = data?.year.toString();
-                    numberOfSeasons = data?.numberOfSeasons.toString();
-                }
-            });
+            try {
+                await fetchTVData(tmdbId, season, episode).then((data) => {
+                    if (data) {
+                        title = data?.title;
+                        episodeId = data?.episodeId.toString();
+                        seasonId = data?.seasonId.toString();
+                        releaseYear = data?.year.toString();
+                        numberOfSeasons = data?.numberOfSeasons.toString();
+                    }
+                });
 
-            const media: ShowMedia = {
-                type: "show",
-                title: title,
-                episode: {
-                    number: parseInt(episode),
-                    tmdbId: episodeId,
-                },
-                season: {
-                    number: parseInt(season),
-                    tmdbId: seasonId,
-                },
-                releaseYear: parseInt(releaseYear),
-                tmdbId: tmdbId,
-                numberOfSeasons: parseInt(numberOfSeasons),
-            };
+                const media: ShowMedia = {
+                    type: "show",
+                    title: title,
+                    episode: {
+                        number: parseInt(episode),
+                        tmdbId: episodeId,
+                    },
+                    season: {
+                        number: parseInt(season),
+                        tmdbId: seasonId,
+                    },
+                    releaseYear: parseInt(releaseYear),
+                    tmdbId: tmdbId,
+                    numberOfSeasons: parseInt(numberOfSeasons),
+                };
 
-            await fetchHlsLinks(proxied, reply, media, "smashystream");
+                await fetchHlsLinks(proxied, reply, media, "smashystream");
+            } catch (error) {
+                reply.status(500).send({
+                    message: "Something went wrong. Please try again",
+                    error: error,
+                });
+            }
         },
     );
 };

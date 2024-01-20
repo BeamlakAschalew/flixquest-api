@@ -82,6 +82,7 @@ const routes = async (fastify: FastifyInstance) => {
                     message: "season is required",
                 });
 
+            try {
             await fetchTVData(tmdbId, season, episode).then((data) => {
                 if (data) {
                     title = data?.title;
@@ -109,6 +110,12 @@ const routes = async (fastify: FastifyInstance) => {
             };
 
             await fetchHlsLinks(proxied, reply, media, "flixhq");
+        } catch (error) {
+             reply.status(500).send({
+                 message: "Something went wrong. Please try again",
+                 error: error,
+             });
+        }
         },
     );
 };

@@ -75,34 +75,40 @@ const routes = async (fastify: FastifyInstance) => {
                 return reply.status(400).send({
                     message: "season is required",
                 });
+            try {
+                await fetchTVData(tmdbId, season, episode).then((data) => {
+                    if (data) {
+                        title = data?.title;
+                        episodeId = data?.episodeId.toString();
+                        seasonId = data?.seasonId.toString();
+                        releaseYear = data?.year.toString();
+                        numberOfSeasons = data?.numberOfSeasons.toString();
+                    }
+                });
 
-            await fetchTVData(tmdbId, season, episode).then((data) => {
-                if (data) {
-                    title = data?.title;
-                    episodeId = data?.episodeId.toString();
-                    seasonId = data?.seasonId.toString();
-                    releaseYear = data?.year.toString();
-                    numberOfSeasons = data?.numberOfSeasons.toString();
-                }
-            });
+                const media: ShowMedia = {
+                    type: "show",
+                    title: title,
+                    episode: {
+                        number: parseInt(episode),
+                        tmdbId: episodeId,
+                    },
+                    season: {
+                        number: parseInt(season),
+                        tmdbId: seasonId,
+                    },
+                    releaseYear: parseInt(releaseYear),
+                    tmdbId: tmdbId,
+                    numberOfSeasons: parseInt(numberOfSeasons),
+                };
 
-            const media: ShowMedia = {
-                type: "show",
-                title: title,
-                episode: {
-                    number: parseInt(episode),
-                    tmdbId: episodeId,
-                },
-                season: {
-                    number: parseInt(season),
-                    tmdbId: seasonId,
-                },
-                releaseYear: parseInt(releaseYear),
-                tmdbId: tmdbId,
-                numberOfSeasons: parseInt(numberOfSeasons),
-            };
-
-            await fetchDash(proxied, reply, media, "showbox");
+                await fetchDash(proxied, reply, media, "showbox");
+            } catch (error) {
+                reply.status(500).send({
+                    message: "Something went wrong. Please try again",
+                    error: error,
+                });
+            }
         },
     );
 };
