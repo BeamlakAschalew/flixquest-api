@@ -1,13 +1,10 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import {
+    fetchHlsLinks,
     fetchMovieData,
     fetchTVData,
-    langConverter,
-    parseM3U8ContentFromUrl,
-    providers,
 } from "../models/functions";
-import { ResolutionStream, SubData } from "../models/types";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
@@ -33,78 +30,26 @@ const routes = async (fastify: FastifyInstance) => {
                     .status(400)
                     .send({ message: "tmdb id is required" });
 
-            await fetchMovieData(tmdbId).then((data) => {
-                if (data) {
-                    releaseYear = data?.year.toString();
-                    title = data?.title;
-                }
-            });
-
-            const media: MovieMedia = {
-                type: "movie",
-                title: title,
-                releaseYear: parseInt(releaseYear),
-                tmdbId: tmdbId,
-            };
-
-            let flixhqSources: ResolutionStream[] = [];
-            let flixhqSubs: SubData[] = [];
-
             try {
-                const outputFlixhqEmbed = await providers(
-                    proxied,
-                    reply,
-                ).runSourceScraper({
-                    media: media,
-                    id: "flixhq",
-                });
-
-                const outputFlixhq = await providers(
-                    proxied,
-                    reply,
-                ).runEmbedScraper({
-                    id: outputFlixhqEmbed.embeds[0].embedId,
-                    url: outputFlixhqEmbed.embeds[0].url,
-                });
-
-                if (outputFlixhq?.stream[0].type === "hls") {
-                    for (
-                        let i = 0;
-                        i < outputFlixhq.stream[0].captions.length;
-                        i++
-                    ) {
-                        flixhqSubs.push({
-                            lang: langConverter(
-                                outputFlixhq.stream[0].captions[i].language,
-                            ),
-                            url: outputFlixhq.stream[0].captions[i].url,
-                        });
+                await fetchMovieData(tmdbId).then((data) => {
+                    if (data) {
+                        releaseYear = data?.year.toString();
+                        title = data?.title;
                     }
-                    flixhqSources.push({
-                        quality: "auto",
-                        url: outputFlixhq?.stream[0].playlist,
-                        isM3U8: true,
-                    });
-                    const m3u8Url = outputFlixhq.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
-                        v?.forEach((r) => {
-                            flixhqSources.push({
-                                quality: r.resolution,
-                                url: r.url,
-                                isM3U8: r.isM3U8,
-                            });
-                        });
-                    });
-                }
-
-                reply.status(200).send({
-                    sources: flixhqSources,
-                    subtitles: flixhqSubs,
                 });
-            } catch (err) {
+
+                const media: MovieMedia = {
+                    type: "movie",
+                    title: title,
+                    releaseYear: parseInt(releaseYear),
+                    tmdbId: tmdbId,
+                };
+
+                await fetchHlsLinks(proxied, reply, media, "flixhq");
+            } catch (error) {
                 reply.status(500).send({
-                    message: "Something went wrong. Please try again later.",
-                    error: err,
+                    message: "Something went wrong. Please try again",
+                    error: error,
                 });
             }
         },
@@ -137,6 +82,7 @@ const routes = async (fastify: FastifyInstance) => {
                     message: "season is required",
                 });
 
+            try {
             await fetchTVData(tmdbId, season, episode).then((data) => {
                 if (data) {
                     title = data?.title;
@@ -163,66 +109,13 @@ const routes = async (fastify: FastifyInstance) => {
                 numberOfSeasons: parseInt(numberOfSeasons),
             };
 
-            let flixhqSources: ResolutionStream[] = [];
-            let flixhqSubs: SubData[] = [];
-
-            try {
-                const outputFlixhqEmbed = await providers(
-                    proxied,
-                    reply,
-                ).runSourceScraper({
-                    media: media,
-                    id: "flixhq",
-                });
-
-                const outputFlixhq = await providers(
-                    proxied,
-                    reply,
-                ).runEmbedScraper({
-                    id: outputFlixhqEmbed.embeds[0].embedId,
-                    url: outputFlixhqEmbed.embeds[0].url,
-                });
-
-                if (outputFlixhq?.stream[0].type === "hls") {
-                    for (
-                        let i = 0;
-                        i < outputFlixhq.stream[0].captions.length;
-                        i++
-                    ) {
-                        flixhqSubs.push({
-                            lang: langConverter(
-                                outputFlixhq.stream[0].captions[i].language,
-                            ),
-                            url: outputFlixhq.stream[0].captions[i].url,
-                        });
-                    }
-                    flixhqSources.push({
-                        quality: "auto",
-                        url: outputFlixhq?.stream[0].playlist,
-                        isM3U8: true,
-                    });
-                    const m3u8Url = outputFlixhq.stream[0].playlist;
-                    await parseM3U8ContentFromUrl(m3u8Url, reply).then((v) => {
-                        v?.forEach((r) => {
-                            flixhqSources.push({
-                                quality: r.resolution,
-                                url: r.url,
-                                isM3U8: r.isM3U8,
-                            });
-                        });
-                    });
-                }
-
-                reply.status(200).send({
-                    sources: flixhqSources,
-                    subtitles: flixhqSubs,
-                });
-            } catch (err) {
-                reply.status(500).send({
-                    message: "Something went wrong. Please try again later.",
-                    error: err,
-                });
-            }
+            await fetchHlsLinks(proxied, reply, media, "flixhq");
+        } catch (error) {
+             reply.status(500).send({
+                 message: "Something went wrong. Please try again",
+                 error: error,
+             });
+        }
         },
     );
 };

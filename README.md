@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="https://consumet.org/">
     <img alt="Consumet" src="https://raw.githubusercontent.com/BeamlakAschalew/beamlakaschalew.github.io/main/cinemax/res/assets/images/logo.png" width="150">
-  </a>
 </p>
 <h1 align="center">FlixQuest API</h1>
 
@@ -25,7 +23,7 @@ Hosted instance: https://flixquest-api.vercel.app
 | SmashyStream | `smashystream` | 🟢 200                                |
 | RemoteStream | `remotestream` | 🔴 500                                |
 | Gomovies     | `gomovies`     | 🟢 200                                |
-| VidSrc       | `vidsrc`       | 🟡 207                                |
+| VidSrc       | `vidsrc`       | 🔴 500                                |
 
 ### Get all links and subtitles for a movie
 
