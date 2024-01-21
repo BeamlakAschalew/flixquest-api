@@ -353,7 +353,7 @@ export async function fetchDash(
     };
 
     let res = redis
-        ? await cache.fetch(redis, key, fetchLinks, 15 * 24 * 60 * 60)
+        ? await cache.fetch(redis, key, fetchLinks, 24 * 60 * 60)
         : await fetchLinks();
 
     reply.status(200).send(res);
