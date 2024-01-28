@@ -358,5 +358,3 @@ export async function fetchDash(
 
     reply.status(200).send(res);
 }
-
-//TODO: add try catch blocks to callers

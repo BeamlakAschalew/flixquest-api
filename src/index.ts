@@ -6,6 +6,7 @@ import remotestream from "./routes/remotestream";
 import smashystream from "./routes/smashystream";
 import gomovies from "./routes/gomovies";
 import vidsrc from "./routes/vidsrc";
+import vidsrcto from "./routes/vidsrcto";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
@@ -57,6 +58,7 @@ export const redis =
     await fastify.register(smashystream, { prefix: "/smashystream" });
     await fastify.register(gomovies, { prefix: "/gomovies" });
     await fastify.register(vidsrc, { prefix: "/vidsrc" });
+    await fastify.register(vidsrcto, { prefix: "/vidsrcto" });
 
     try {
         fastify.get("/", async (_, rp) => {
