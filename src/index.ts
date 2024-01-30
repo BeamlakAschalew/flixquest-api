@@ -5,8 +5,11 @@ import zoe from "./routes/zoe";
 import remotestream from "./routes/remotestream";
 import smashystream from "./routes/smashystream";
 import gomovies from "./routes/gomovies";
+import ridomovies from "./routes/ridomovies";
 import vidsrc from "./routes/vidsrc";
 import vidsrcto from "./routes/vidsrcto";
+import kissasian from "./routes/kissasian";
+import goojara from "./routes/goojara";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
@@ -57,8 +60,11 @@ export const redis =
     await fastify.register(remotestream, { prefix: "/remotestream" });
     await fastify.register(smashystream, { prefix: "/smashystream" });
     await fastify.register(gomovies, { prefix: "/gomovies" });
+    await fastify.register(ridomovies, { prefix: "/ridomovies" });
     await fastify.register(vidsrc, { prefix: "/vidsrc" });
     await fastify.register(vidsrcto, { prefix: "/vidsrcto" });
+    await fastify.register(kissasian, { prefix: "/kissasian" });
+    await fastify.register(goojara, { prefix: "/goojara" });
 
     try {
         fastify.get("/", async (_, rp) => {

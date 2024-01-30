@@ -18,7 +18,6 @@ const fetch = async <T>(
 };
 
 const get = async <T>(redis: Redis, key: string): Promise<T> => {
-    console.log("GET: " + key);
     const value = await redis.get(key);
     if (value === null) return null as any;
 
@@ -31,7 +30,6 @@ const set = async <T>(
     fetcher: () => T,
     expires: number,
 ) => {
-    console.log(`SET: ${key}, EXP: ${expires}`);
     const value = await fetcher();
     await redis.set(key, JSON.stringify(value), "EX", expires);
     return value;
