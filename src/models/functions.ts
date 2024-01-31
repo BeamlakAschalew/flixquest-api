@@ -1,12 +1,11 @@
 import {
-    makeProviders,
     makeStandardFetcher,
     makeSimpleProxyFetcher,
     targets,
-    ProviderMakerOptions,
     ShowMedia,
     MovieMedia,
     NotFoundError,
+    buildProviders,
 } from "@movie-web/providers";
 import axios, { AxiosError } from "axios";
 import dotenv from "dotenv";
@@ -15,16 +14,14 @@ import { ResolutionStream, SubData, supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
 import { redis } from "../index";
 import cache from "../utils/cache";
-import Redis from "ioredis";
 dotenv.config();
 const proxyUrl = process.env.WORKERS_URL;
 
 const providers = (useProxy: string, reply: FastifyReply) => {
-    let config: ProviderMakerOptions = {
-        fetcher: makeStandardFetcher(fetch),
-        target: targets.ANY,
-        consistentIpForRequests: false,
-    };
+    let config = buildProviders()
+        .setTarget(targets.ANY)
+        .setFetcher(makeStandardFetcher(fetch))
+        .addBuiltinProviders();
 
     if (useProxy === "true" || typeof useProxy === "undefined") {
         if (typeof proxyUrl === "undefined" || proxyUrl === "") {
@@ -33,19 +30,15 @@ const providers = (useProxy: string, reply: FastifyReply) => {
                     "No proxy (workers) URL found in environment variables use `proxied=false` to fetch without a proxy",
             });
         }
-        config = {
-            ...config,
-            proxiedFetcher: makeSimpleProxyFetcher(
-                proxyUrl || proxyUrl || "",
-                fetch,
-            ),
-        };
+        config.setProxiedFetcher(
+            makeSimpleProxyFetcher(proxyUrl || proxyUrl || "", fetch),
+        );
     } else if (useProxy !== "false") {
         reply.status(500).send({
             message: "Invalid 'proxied' argument",
         });
     }
-    return makeProviders(config);
+    return config.build();
 };
 
 async function fetchM3U8Content(url: string): Promise<string> {
@@ -358,5 +351,3 @@ export async function fetchDash(
 
     reply.status(200).send(res);
 }
-
-//TODO: add try catch blocks to callers
