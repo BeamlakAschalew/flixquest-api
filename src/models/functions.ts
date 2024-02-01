@@ -219,10 +219,29 @@ export async function fetchHlsLinks(
                 id: provider,
             });
 
-            const output = await providers(proxied, reply).runEmbedScraper({
-                id: outputEmbed.embeds[0].embedId,
-                url: outputEmbed.embeds[0].url,
+            outputEmbed.embeds.forEach((e) => {
+                console.log(e.embedId);
             });
+
+            let foundIndex = -1;
+
+            for (let i = 0; i < outputEmbed.embeds.length; i++) {
+                if (outputEmbed.embeds[i].embedId === "vidcloud") {
+                    foundIndex = i;
+                }
+            }
+
+            const output = await providers(proxied, reply).runEmbedScraper(
+                foundIndex !== -1
+                    ? {
+                          id: outputEmbed.embeds[foundIndex].embedId,
+                          url: outputEmbed.embeds[foundIndex].url,
+                      }
+                    : {
+                          id: outputEmbed.embeds[0].embedId,
+                          url: outputEmbed.embeds[0].url,
+                      },
+            );
 
             if (output?.stream[0].type === "hls") {
                 for (let i = 0; i < output.stream[0].captions.length; i++) {
@@ -251,8 +270,14 @@ export async function fetchHlsLinks(
             }
 
             const dataToCache = {
-                referrer: outputEmbed.embeds[0].url,
-                server: outputEmbed.embeds[0].embedId,
+                referrer:
+                    foundIndex !== -1
+                        ? outputEmbed.embeds[foundIndex].url
+                        : outputEmbed.embeds[0].url,
+                server:
+                    foundIndex !== -1
+                        ? outputEmbed.embeds[foundIndex].embedId
+                        : outputEmbed.embeds[0].embedId,
                 sources: videoSources,
                 subtitles: subSources,
             };
