@@ -225,11 +225,11 @@ export async function fetchHlsLinks(
 
             let foundIndex = -1;
 
-            // for (let i = 0; i < outputEmbed.embeds.length; i++) {
-            //     if (outputEmbed.embeds[i].embedId === "vidcloud") {
-            //         foundIndex = i;
-            //     }
-            // }
+            for (let i = 0; i < outputEmbed.embeds.length; i++) {
+               if (outputEmbed.embeds[i].embedId === "vidcloud") {
+                     foundIndex = i;
+                 }
+             }
 
             const output = await providers(proxied, reply).runEmbedScraper(
                 foundIndex !== -1
