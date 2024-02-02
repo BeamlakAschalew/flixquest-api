@@ -10,6 +10,7 @@ import vidsrc from "./routes/vidsrc";
 import vidsrcto from "./routes/vidsrcto";
 import kissasian from "./routes/kissasian";
 import goojara from "./routes/goojara";
+import nepu from "./routes/nepu";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
@@ -65,6 +66,7 @@ export const redis =
     await fastify.register(vidsrcto, { prefix: "/vidsrcto" });
     await fastify.register(kissasian, { prefix: "/kissasian" });
     await fastify.register(goojara, { prefix: "/goojara" });
+    await fastify.register(nepu, { prefix: "/nepu" });
 
     try {
         fastify.get("/", async (_, rp) => {
