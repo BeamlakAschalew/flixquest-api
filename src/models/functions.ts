@@ -203,7 +203,7 @@ export async function fetchHlsLinks(
 ) {
     let key = `${provider}`;
     media.type === "show"
-        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        ? (key += `:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
         : (key += `:movie:${media.tmdbId}`);
 
     const fetchLinks = async () => {
@@ -225,11 +225,11 @@ export async function fetchHlsLinks(
 
             let foundIndex = -1;
 
-            // for (let i = 0; i < outputEmbed.embeds.length; i++) {
-            //     if (outputEmbed.embeds[i].embedId === "vidcloud") {
-            //         foundIndex = i;
-            //     }
-            // }
+            for (let i = 0; i < outputEmbed.embeds.length; i++) {
+               if (outputEmbed.embeds[i].embedId === "vidcloud") {
+                     foundIndex = i;
+                 }
+             }
 
             const output = await providers(proxied, reply).runEmbedScraper(
                 foundIndex !== -1
@@ -303,7 +303,7 @@ export async function fetchDash(
 ) {
     let key = `${provider}`;
     media.type === "show"
-        ? (key += `:show:${media.tmdbId}:${media.season}:${media.episode}`)
+        ? (key += `:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
         : (key += `:movie:${media.tmdbId}`);
 
     const fetchLinks = async () => {
@@ -371,7 +371,7 @@ export async function fetchDash(
     };
 
     let res = redis
-        ? await cache.fetch(redis, key, fetchLinks, 15 * 24 * 60 * 60)
+        ? await cache.fetch(redis, key, fetchLinks, 24 * 60 * 60)
         : await fetchLinks();
 
     reply.status(200).send(res);

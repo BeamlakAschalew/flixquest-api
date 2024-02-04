@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="https://consumet.org/">
     <img alt="Consumet" src="https://raw.githubusercontent.com/BeamlakAschalew/beamlakaschalew.github.io/main/cinemax/res/assets/images/logo.png" width="150">
-  </a>
 </p>
 <h1 align="center">FlixQuest API</h1>
 
@@ -25,7 +23,7 @@ Hosted instance: https://flixquest-api.vercel.app
 | SmashyStream | `smashystream` | 🟢 200                                |
 | RemoteStream | `remotestream` | 🔴 500                                |
 | Gomovies     | `gomovies`     | 🟢 200                                |
-| VidSrc       | `vidsrc`       | 🟡 207                                |
+| VidSrc       | `vidsrc`       | 🔴 500                                |
 
 ### Get all links and subtitles for a movie
 
@@ -112,6 +110,12 @@ Host your own instance of FlixQuest API on Render using the button below.
 
 You can get Cloudflare proxy at https://workers.cloudflare.com/<br>
 Or deploy your own custom proxy from [here](https://github.com/movie-web/simple-proxy) and place the endpoint in `WORKERS_URL` 
+
+You can cache data that comes from TMDB and from the providers if you have a [Redis](https://redis.com) database:
+
+`REDIS_HOST` URL of your Redis database<br>
+`REDIS_PASSWORD` password of your database<br>
+`REDIS_PORT` port of your database connection
 
 
 ## Credits
