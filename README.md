@@ -17,13 +17,13 @@ Hosted instance: https://flixquest-api.vercel.app
 
 | Name         | Id             | Status                               |
 | :----------- | :------------- | :----------------------------------- |
-| ShowBox      | `showbox`      | 🟢 200 <br>(without CloudFlare proxy) |
+| ShowBox      | `showbox`      | 🔴 500  |
 | FlixHQ       | `flixhq`       | 🟢 200                                |
 | ZoeChip      | `zoe`          | 🟢 200                                |
-| SmashyStream | `smashystream` | 🟢 200                                |
+| SmashyStream | `smashystream` | 🔴 500                                 |
 | RemoteStream | `remotestream` | 🔴 500                                |
 | Gomovies     | `gomovies`     | 🟢 200                                |
-| VidSrc       | `vidsrc`       | 🔴 500                                |
+| VidSrc       | `vidsrc`       | 🔴 200                                |
 
 ### Get all links and subtitles for a movie
 
