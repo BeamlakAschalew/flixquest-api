@@ -312,10 +312,7 @@ export async function fetchHlsLinks(
 
             return dataToCache;
         } catch (err) {
-            reply.status(500).send({
-                message: "Media not found",
-                error: err,
-            });
+            throw new NotFoundError();
         }
     };
 
@@ -386,9 +383,7 @@ export async function fetchDash(
             }
 
             if (videoSources.length === 0) {
-                reply.status(404).send({
-                    message: "Media not found",
-                });
+                throw new NotFoundError("Source empty");
             }
 
             const dataToCache = {
@@ -399,10 +394,7 @@ export async function fetchDash(
 
             return dataToCache;
         } catch (err) {
-            reply.status(500).send({
-                message: "Something went wrong",
-                error: err,
-            });
+            throw new NotFoundError();
         }
     };
 
