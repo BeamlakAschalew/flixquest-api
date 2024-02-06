@@ -253,7 +253,7 @@ export async function fetchHlsLinks(
 
             for (let i = 0; i < outputEmbed.embeds.length; i++) {
                 if (outputEmbed.embeds[i].embedId === "vidcloud") {
-                    foundIndex = i;
+                    //  foundIndex = i;
                 }
             }
 
