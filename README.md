@@ -23,7 +23,7 @@ Hosted instance: https://flixquest-api.vercel.app
 | SmashyStream | `smashystream` | 🔴 500                                 |
 | RemoteStream | `remotestream` | 🔴 500                                |
 | Gomovies     | `gomovies`     | 🟢 200                                |
-| VidSrc       | `vidsrc`       | 🔴 200                                |
+| VidSrc       | `vidsrc`       | 🟢 200                                |
 
 ### Get all links and subtitles for a movie
 
