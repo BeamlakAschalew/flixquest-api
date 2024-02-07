@@ -21,6 +21,7 @@ const routes = async (fastify: FastifyInstance) => {
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const proxied = (request.query as { proxied: string }).proxied;
+            const server = (request.query as { server: string }).server;
 
             let releaseYear: string = "";
             let title: string = "";
@@ -45,7 +46,7 @@ const routes = async (fastify: FastifyInstance) => {
                     tmdbId: tmdbId,
                 };
 
-                await fetchHlsLinks(proxied, reply, media, "flixhq");
+                await fetchHlsLinks(proxied, reply, media, "flixhq", server);
             } catch (error) {
                 reply.status(500).send({
                     message: "Something went wrong. Please try again",
@@ -62,6 +63,7 @@ const routes = async (fastify: FastifyInstance) => {
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
             const proxied = (request.query as { proxied: string }).proxied;
+            const server = (request.query as { server: string }).server;
 
             let title: string = "";
             let episodeId: string = "";
@@ -83,39 +85,39 @@ const routes = async (fastify: FastifyInstance) => {
                 });
 
             try {
-            await fetchTVData(tmdbId, season, episode).then((data) => {
-                if (data) {
-                    title = data?.title;
-                    episodeId = data?.episodeId.toString();
-                    seasonId = data?.seasonId.toString();
-                    releaseYear = data?.year.toString();
-                    numberOfSeasons = data?.numberOfSeasons.toString();
-                }
-            });
+                await fetchTVData(tmdbId, season, episode).then((data) => {
+                    if (data) {
+                        title = data?.title;
+                        episodeId = data?.episodeId.toString();
+                        seasonId = data?.seasonId.toString();
+                        releaseYear = data?.year.toString();
+                        numberOfSeasons = data?.numberOfSeasons.toString();
+                    }
+                });
 
-            const media: ShowMedia = {
-                type: "show",
-                title: title,
-                episode: {
-                    number: parseInt(episode),
-                    tmdbId: episodeId,
-                },
-                season: {
-                    number: parseInt(season),
-                    tmdbId: seasonId,
-                },
-                releaseYear: parseInt(releaseYear),
-                tmdbId: tmdbId,
-                numberOfSeasons: parseInt(numberOfSeasons),
-            };
+                const media: ShowMedia = {
+                    type: "show",
+                    title: title,
+                    episode: {
+                        number: parseInt(episode),
+                        tmdbId: episodeId,
+                    },
+                    season: {
+                        number: parseInt(season),
+                        tmdbId: seasonId,
+                    },
+                    releaseYear: parseInt(releaseYear),
+                    tmdbId: tmdbId,
+                    numberOfSeasons: parseInt(numberOfSeasons),
+                };
 
-            await fetchHlsLinks(proxied, reply, media, "flixhq");
-        } catch (error) {
-             reply.status(500).send({
-                 message: "Something went wrong. Please try again",
-                 error: error,
-             });
-        }
+                await fetchHlsLinks(proxied, reply, media, "flixhq", server);
+            } catch (error) {
+                reply.status(500).send({
+                    message: "Something went wrong. Please try again",
+                    error: error,
+                });
+            }
         },
     );
 };

@@ -230,6 +230,7 @@ export async function fetchHlsLinks(
     reply: FastifyReply,
     media: ShowMedia | MovieMedia,
     provider: string,
+    server: string,
 ) {
     let key = `${provider}`;
     media.type === "show"
@@ -251,9 +252,14 @@ export async function fetchHlsLinks(
 
             let foundIndex = -1;
 
-            for (let i = 0; i < outputEmbed.embeds.length; i++) {
-                if (outputEmbed.embeds[i].embedId === "vidcloud") {
-                    //  foundIndex = i;
+            if (server !== "undefined") {
+                if (server !== "") {
+                    for (let i = 0; i < outputEmbed.embeds.length; i++) {
+                        if (outputEmbed.embeds[i].embedId === server) {
+                            foundIndex = i;
+                            break;
+                        }
+                    }
                 }
             }
 
