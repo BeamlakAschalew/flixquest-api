@@ -233,9 +233,12 @@ export async function fetchHlsLinks(
     server: string,
 ) {
     let key = `${provider}`;
+    if (server === "undefined") {
+        server = "-";
+    }
     media.type === "show"
-        ? (key += `:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
-        : (key += `:movie:${media.tmdbId}`);
+        ? (key += `:${server}:show:${media.tmdbId}:${media.season.number}:${media.episode.number}`)
+        : (key += `:${server}:movie:${media.tmdbId}`);
 
     const fetchLinks = async () => {
         let videoSources: ResolutionStream[] = [];
@@ -253,7 +256,7 @@ export async function fetchHlsLinks(
             let foundIndex = -1;
 
             if (server !== "undefined") {
-                if (server !== "") {
+                if (server !== "-") {
                     for (let i = 0; i < outputEmbed.embeds.length; i++) {
                         if (outputEmbed.embeds[i].embedId === server) {
                             foundIndex = i;
