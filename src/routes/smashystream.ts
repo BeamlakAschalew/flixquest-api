@@ -21,6 +21,7 @@ const routes = async (fastify: FastifyInstance) => {
         async (request: FastifyRequest, reply: FastifyReply) => {
             const tmdbId = (request.query as { tmdbId: string }).tmdbId;
             const proxied = (request.query as { proxied: string }).proxied;
+            const server = (request.query as { server: string }).server;
 
             let releaseYear: string = "";
             let title: string = "";
@@ -45,7 +46,13 @@ const routes = async (fastify: FastifyInstance) => {
                     tmdbId: tmdbId,
                 };
 
-                await fetchHlsLinks(proxied, reply, media, "smashystream");
+                await fetchHlsLinks(
+                    proxied,
+                    reply,
+                    media,
+                    "smashystream",
+                    server,
+                );
             } catch (error) {
                 reply.status(500).send({
                     message: "Something went wrong. Please try again",
@@ -62,6 +69,7 @@ const routes = async (fastify: FastifyInstance) => {
             const episode = (request.query as { episode: string }).episode;
             const season = (request.query as { season: string }).season;
             const proxied = (request.query as { proxied: string }).proxied;
+            const server = (request.query as { server: string }).server;
 
             let title: string = "";
             let episodeId: string = "";
@@ -109,7 +117,13 @@ const routes = async (fastify: FastifyInstance) => {
                     numberOfSeasons: parseInt(numberOfSeasons),
                 };
 
-                await fetchHlsLinks(proxied, reply, media, "smashystream");
+                await fetchHlsLinks(
+                    proxied,
+                    reply,
+                    media,
+                    "smashystream",
+                    server,
+                );
             } catch (error) {
                 reply.status(500).send({
                     message: "Something went wrong. Please try again",
