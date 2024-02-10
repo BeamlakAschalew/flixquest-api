@@ -356,8 +356,6 @@ export async function fetchDash(
                 id: provider,
             });
 
-            outputEmbed.embeds.forEach((e) => console.log(e.embedId));
-
             const output = await providers(proxied, reply).runEmbedScraper({
                 id: outputEmbed.embeds[0].embedId,
                 url: outputEmbed.embeds[0].url,
