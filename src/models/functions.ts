@@ -348,55 +348,68 @@ export async function fetchDash(
         let subSources: SubData[] = [];
 
         try {
-            const output = await providers(proxied, reply).runAll({
+            const outputEmbed = await providers(
+                proxied,
+                reply,
+            ).runSourceScraper({
                 media: media,
-                embedOrder: [provider],
+                id: provider,
             });
 
-            if (output?.stream?.type === "file") {
-                if (output.stream.qualities[1080] != undefined) {
+            const output = await providers(proxied, reply).runEmbedScraper({
+                id: outputEmbed.embeds[0].embedId,
+                url: outputEmbed.embeds[0].url,
+            });
+
+            if (output?.stream[0]?.type === "file") {
+                if (output.stream[0].qualities["4k"] != undefined) {
+                    videoSources.push({
+                        quality: "4K",
+                        url: output.stream[0].qualities["4k"].url,
+                        isM3U8: false,
+                    });
+                }
+                if (output.stream[0].qualities[1080] != undefined) {
                     videoSources.push({
                         quality: "1080",
-                        url: output.stream.qualities[1080].url,
+                        url: output.stream[0].qualities[1080].url,
                         isM3U8: false,
                     });
                 }
-                if (output.stream.qualities[720] != undefined) {
+                if (output.stream[0].qualities[720] != undefined) {
                     videoSources.push({
                         quality: "720",
-                        url: output.stream.qualities[720].url,
+                        url: output.stream[0].qualities[720].url,
                         isM3U8: false,
                     });
                 }
-                if (output.stream.qualities[480] != undefined) {
+                if (output.stream[0].qualities[480] != undefined) {
                     videoSources.push({
                         quality: "480",
-                        url: output.stream.qualities[480].url,
+                        url: output.stream[0].qualities[480].url,
                         isM3U8: false,
                     });
                 }
-                if (output.stream.qualities[360] != undefined) {
+                if (output.stream[0].qualities[360] != undefined) {
                     videoSources.push({
                         quality: "360",
-                        url: output.stream.qualities[360].url,
+                        url: output.stream[0].qualities[360].url,
                         isM3U8: false,
                     });
                 }
 
-                for (let i = 0; i < output.stream.captions.length; i++) {
+                for (let i = 0; i < output.stream[0].captions.length; i++) {
                     subSources.push({
-                        lang: langConverter(output.stream.captions[i].language),
-                        url: output.stream.captions[i].url,
+                        lang: langConverter(
+                            output.stream[0].captions[i].language,
+                        ),
+                        url: output.stream[0].captions[i].url,
                     });
                 }
-            }
-
-            if (videoSources.length === 0) {
-                throw new NotFoundError("Source empty");
             }
 
             const dataToCache = {
-                server: output?.sourceId,
+                server: outputEmbed.embeds[0].embedId,
                 sources: videoSources,
                 subtitles: subSources,
             };
