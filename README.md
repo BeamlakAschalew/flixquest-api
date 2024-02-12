@@ -18,11 +18,11 @@ Hosted instance: https://flixquest-api.vercel.app
 | Name         | Id             | Status   |
 | :----------- | :------------- | :------- |
 | ShowBox      | `showbox`      | 🟢 200   |
-| FlixHQ       | `flixhq`       | 🟢 200   |
-| ZoeChip      | `zoe`          | 🟢 200   |
+| FlixHQ       | `flixhq`       | 🔴 500   |
+| ZoeChip      | `zoe`          | 🔴 500   |
 | SmashyStream | `smashystream` | 🔴 500   |
 | RemoteStream | `remotestream` | 🔴 500   |
-| Gomovies     | `gomovies`     | 🟢 200   |
+| Gomovies     | `gomovies`     | 🔴 500   |
 | VidSrc       | `vidsrc`       | 🟢 200   |
 | VidSrcTo     | `vidsrcto`     | 🟢 200   |
 
