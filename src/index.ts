@@ -33,11 +33,10 @@ export const redis =
         password: process.env.REDIS_PASSWORD,
     });
 
-const PORT = Number(process.env.PORT) || 3000;
+
 
 async function startServer() {
-    
-
+    const PORT = Number(process.env.PORT) || 3000;
     console.log(chalk.green(`Starting server on port ${PORT}... 🚀`));
     if (!process.env.WORKERS_URL)
         console.warn(
@@ -102,4 +101,7 @@ async function startServer() {
         process.exit(1);
     }
 }
+export default startServer;
+
+startServer();
 
