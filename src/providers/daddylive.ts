@@ -20,12 +20,12 @@ export async function get247() : Promise<ChannelEntry[] | null> {
     return parsedChannels;
 }
 
-function extractChannelId(text: string) : string | boolean {
-    const regex = /\/stream\/(\S+)/;
+function extractChannelId(text: string) : number | boolean {
+    const regex = /(\d+)/;
     const match = text.match(regex);
 
     if (match) {
-        return match[1].toString();
+        return Number.parseInt(match[0]);
     } else {
         return false;
     }

@@ -16,7 +16,7 @@ export type SubFormat = {
 
 export type ChannelEntry = {
     channel_name: string;
-    id: string;
+    id: number;
 }
 
 export const supportedLanguages: SubFormat[] = [
