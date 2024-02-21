@@ -1,6 +1,6 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
-import { fetchDash, fetchMovieData, fetchTVData } from "../models/functions";
+import { fetchDash, fetchMovieData, fetchTVData } from "../utils/functions";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
