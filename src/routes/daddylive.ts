@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 import { get247 } from "../providers/daddylive";
 import { daddyliveReferrer, daddyliveStreamBaseUrl, daddyliveTrailingUrl, daddyliveUserAgent } from "../constants/api_constants";
 

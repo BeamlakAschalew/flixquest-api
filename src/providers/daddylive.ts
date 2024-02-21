@@ -1,6 +1,6 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { ChannelEntry } from "types";
+import { ChannelEntry } from "../utils/types";
 
 export async function get247() : Promise<ChannelEntry[] | null> {
     const channels = await axios.get("https://dlhd.sx/24-7-channels.php");

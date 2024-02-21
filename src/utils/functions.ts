@@ -9,11 +9,11 @@ import {
 } from "@movie-web/providers";
 import axios, { AxiosError } from "axios";
 import dotenv from "dotenv";
-import { tmdbBaseUrl, tmdbKey } from "./constants/api_constants";
+import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
 import { ResolutionStream, SubData, supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
-import { redis } from "./index";
-import cache from "./utils/cache";
+import { redis } from "../index";
+import cache from "./cache";
 dotenv.config();
 const proxyUrl = process.env.WORKERS_URL;
 
