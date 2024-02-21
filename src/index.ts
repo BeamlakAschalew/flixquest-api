@@ -11,15 +11,11 @@ import vidsrcto from "./routes/vidsrcto";
 import kissasian from "./routes/kissasian";
 import goojara from "./routes/goojara";
 import nepu from "./routes/nepu";
+import daddylive from "./routes/daddylive";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
 import Redis from "ioredis";
-import {
-    buildProviders,
-    makeProviders,
-    makeStandardFetcher,
-} from "@movie-web/providers";
 dotenv.config();
 
 export const workers_url = process.env.WORKERS_URL && process.env.WORKERS_URL;
@@ -72,17 +68,11 @@ export const redis =
     await fastify.register(kissasian, { prefix: "/kissasian" });
     await fastify.register(goojara, { prefix: "/goojara" });
     await fastify.register(nepu, { prefix: "/nepu" });
+    await fastify.register(daddylive, {prefix: "/daddylive"});
 
     try {
         fastify.get("/", async (_, rp) => {
-            let p = buildProviders()
-                .setTarget('any')
-                .setFetcher(makeStandardFetcher(fetch))
-                .addBuiltinProviders()
-                .build();
-            console.log(p.listSources());
-
-            let prov = rp.status(200).send("Welcome to FlixQuest API! 🎉");
+            rp.status(200).send("Welcome to FlixQuest API! 🎉");
         });
         fastify.get("*", (request, reply) => {
             reply.status(404).send({

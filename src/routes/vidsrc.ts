@@ -4,7 +4,7 @@ import {
     fetchHlsLinks,
     fetchMovieData,
     fetchTVData,
-} from "../models/functions";
+} from "../utils/functions";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {

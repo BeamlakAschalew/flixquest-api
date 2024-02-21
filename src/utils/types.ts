@@ -14,6 +14,11 @@ export type SubFormat = {
     longName: string;
 };
 
+export type ChannelEntry = {
+    channel_name: string;
+    id: number;
+}
+
 export const supportedLanguages: SubFormat[] = [
     { shortCode: "ar", longName: "Arabic" },
     { shortCode: "bg", longName: "Bulgarian" },
