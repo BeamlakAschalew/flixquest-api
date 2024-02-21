@@ -13,7 +13,7 @@ import { tmdbBaseUrl, tmdbKey } from "../constants/api_constants";
 import { ResolutionStream, SubData, supportedLanguages } from "./types";
 import { FastifyReply } from "fastify";
 import { redis } from "../index";
-import cache from "./cache";
+import cache from "../utils/cache";
 dotenv.config();
 const proxyUrl = process.env.WORKERS_URL;
 
