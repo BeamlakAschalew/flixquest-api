@@ -33,9 +33,10 @@ export const redis =
         password: process.env.REDIS_PASSWORD,
     });
 
-(async () => {
-    const PORT = Number(process.env.PORT) || 3000;
 
+
+async function startServer() {
+    const PORT = Number(process.env.PORT) || 3000;
     console.log(chalk.green(`Starting server on port ${PORT}... 🚀`));
     if (!process.env.WORKERS_URL)
         console.warn(
@@ -99,4 +100,8 @@ export const redis =
         fastify.log.error(err);
         process.exit(1);
     }
-})();
+}
+export default startServer;
+
+startServer();
+
