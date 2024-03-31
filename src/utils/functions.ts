@@ -119,6 +119,8 @@ export async function fetchMovieData(id: string): Promise<{
 } | null> {
     const key = `tmdb-movie:${id}`;
     const fetchData = async () => {
+        console.log("Fetching mov data");
+
         const apiUrl = `${tmdbBaseUrl}/3/movie/${id}?language=en-US&api_key=${tmdbKey}`;
         try {
             const response = await axios.get(apiUrl);
@@ -348,6 +350,9 @@ export async function fetchDash(
         let subSources: SubData[] = [];
 
         try {
+            if (provider === "showbox" || provider === "superstream") {
+                throw new NotFoundError();
+            }
             const outputEmbed = await providers(
                 proxied,
                 reply,
