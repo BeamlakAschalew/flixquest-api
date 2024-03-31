@@ -350,6 +350,9 @@ export async function fetchDash(
         let subSources: SubData[] = [];
 
         try {
+            if (provider === "showbox" || provider === "superstream") {
+                throw new NotFoundError();
+            }
             const outputEmbed = await providers(
                 proxied,
                 reply,
