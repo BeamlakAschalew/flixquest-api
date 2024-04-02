@@ -1,31 +1,31 @@
 {
-  "name": "flixquest-api",
-  "version": "1.1.1",
-  "description": "A node app that uses @movie-web/providers to scrape streaming sites",
-  "main": "src/index.ts",
-  "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
-    "lint": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@fastify/cors": "^8.4.1",
-    "@movie-web/providers": "git+https://github.com/BeamlakAschalew/mw-prod.git",
-    "@types/dotenv": "^8.2.0",
-    "axios": "^1.6.2",
-    "chalk": "4.1.2",
-    "cheerio": "^1.0.0-rc.12",
-    "dotenv": "^16.3.1",
-    "fastify": "^4.24.3",
-    "ioredis": "^5.3.2",
-    "prettier": "^3.1.0",
-    "ts-node": "^10.9.1",
-    "typescript": "5.0.2"
-  },
-  "devDependencies": {
-    "@types/node": "^20.9.4"
-  }
+    "name": "flixquest-api",
+    "version": "1.1.1",
+    "description": "A node app that uses @movie-web/providers to scrape streaming sites",
+    "main": "src/index.ts",
+    "scripts": {
+        "start": "ts-node src/index.ts",
+        "dev": "nodemon src/index.ts",
+        "lint": "prettier --write .",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@fastify/cors": "^8.4.1",
+        "@movie-web/providers": "^2.2.7",
+        "@types/dotenv": "^8.2.0",
+        "axios": "^1.6.2",
+        "chalk": "4.1.2",
+        "cheerio": "^1.0.0-rc.12",
+        "dotenv": "^16.3.1",
+        "fastify": "^4.24.3",
+        "ioredis": "^5.3.2",
+        "prettier": "^3.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "5.0.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.9.4"
+    }
 }

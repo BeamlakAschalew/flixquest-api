@@ -101,7 +101,6 @@ const routes = async (fastify: FastifyInstance) => {
                     },
                     releaseYear: parseInt(releaseYear),
                     tmdbId: tmdbId,
-                    numberOfSeasons: parseInt(numberOfSeasons),
                 };
 
                 await fetchDash(proxied, reply, media, "showbox");

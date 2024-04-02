@@ -1,10 +1,6 @@
 import { MovieMedia, ShowMedia } from "@movie-web/providers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
-import {
-    fetchHlsLinks,
-    fetchMovieData,
-    fetchTVData,
-} from "../utils/functions";
+import { fetchHlsLinks, fetchMovieData, fetchTVData } from "../utils/functions";
 
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
@@ -107,7 +103,6 @@ const routes = async (fastify: FastifyInstance) => {
                     },
                     releaseYear: parseInt(releaseYear),
                     tmdbId: tmdbId,
-                    numberOfSeasons: parseInt(numberOfSeasons),
                 };
 
                 await fetchHlsLinks(proxied, reply, media, "gomovies", server);
