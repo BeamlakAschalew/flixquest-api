@@ -19,7 +19,7 @@ const proxyUrl = process.env.WORKERS_URL;
 
 const providers = (useProxy: string, reply: FastifyReply) => {
     let config = buildProviders()
-        .setTarget(targets.ANY)
+        .setTarget(targets.BROWSER_EXTENSION)
         .setFetcher(makeStandardFetcher(fetch))
         .addBuiltinProviders();
 
@@ -292,6 +292,7 @@ export async function fetchHlsLinks(
                     url: output?.stream[0].playlist,
                     isM3U8: true,
                 });
+
                 const m3u8Url = output.stream[0].playlist;
                 await parseM3U8ContentFromUrl(m3u8Url, reply, provider).then(
                     (v) => {

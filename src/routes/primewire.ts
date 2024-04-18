@@ -5,7 +5,7 @@ import { fetchHlsLinks, fetchMovieData, fetchTVData } from "../utils/functions";
 const routes = async (fastify: FastifyInstance) => {
     fastify.get("/", (_, rp) => {
         rp.status(200).send({
-            intro: "Welcome to the flixhq provider",
+            intro: "Welcome to the primewire provider",
             routes: "/watch-movie " + "/watch-tv",
         });
     });
@@ -42,13 +42,7 @@ const routes = async (fastify: FastifyInstance) => {
                     tmdbId: tmdbId,
                 };
 
-                await fetchHlsLinks(
-                    proxied,
-                    reply,
-                    media,
-                    "ridomovies",
-                    server,
-                );
+                await fetchHlsLinks(proxied, reply, media, "primewire", server);
             } catch (error) {
                 reply.status(500).send({
                     message: "Something went wrong. Please try again",
@@ -112,7 +106,7 @@ const routes = async (fastify: FastifyInstance) => {
                     tmdbId: tmdbId,
                 };
 
-                await fetchHlsLinks(proxied, reply, media, "flixhq", server);
+                await fetchHlsLinks(proxied, reply, media, "primewire", server);
             } catch (error) {
                 reply.status(500).send({
                     message: "Something went wrong. Please try again",

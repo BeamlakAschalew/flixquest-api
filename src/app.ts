@@ -12,10 +12,18 @@ import kissasian from "./routes/kissasian";
 import goojara from "./routes/goojara";
 import daddylive from "./routes/daddylive";
 import nepu from "./routes/nepu";
+import warezcdn from "./routes/warezcdn";
+import primewire from "./routes/primewire";
+import insertunit from "./routes/insertunit";
 import chalk from "chalk";
 import FastifyCors from "@fastify/cors";
 import dotenv from "dotenv";
 import Redis from "ioredis";
+import {
+    buildProviders,
+    targets,
+    makeStandardFetcher,
+} from "@movie-web/providers";
 dotenv.config();
 
 export const workers_url = process.env.WORKERS_URL && process.env.WORKERS_URL;
@@ -28,8 +36,6 @@ export const redis =
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
     });
-
-
 
 async function startServer() {
     const PORT = Number(process.env.PORT) || 3000;
@@ -69,7 +75,10 @@ async function startServer() {
     await fastify.register(kissasian, { prefix: "/kissasian" });
     await fastify.register(goojara, { prefix: "/goojara" });
     await fastify.register(nepu, { prefix: "/nepu" });
-    await fastify.register(daddylive, {prefix: "/daddylive"});
+    await fastify.register(daddylive, { prefix: "/daddylive" });
+    await fastify.register(warezcdn, { prefix: "/warez" });
+    await fastify.register(primewire, { prefix: "/primewire" });
+    await fastify.register(insertunit, { prefix: "/insertunit" });
 
     try {
         fastify.get("/", async (_, rp) => {
