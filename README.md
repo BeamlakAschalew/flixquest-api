@@ -22,7 +22,7 @@ Hosted instance: https://flixquest-api.vercel.app
 | ZoeChip      | `zoe`          | 🔴 500   |
 | SmashyStream | `smashystream` | 🔴 500   |
 | RemoteStream | `remotestream` | 🔴 500   |
-| Gomovies     | `gomovies`     | 🔴 500   |
+| Gomovies     | `gomoviesgomovies`     | 🔴 500   |
 | VidSrc       | `vidsrc`       | 🟢 200   |
 | VidSrcTo     | `vidsrcto`     | 🟢 200   |
 
@@ -63,7 +63,7 @@ Get streaming link and subtitles for the movie 'The Hangover 1' from the 'FlixHQ
 Get streaming link and subtitles for the TV show 'The Office' from the 'FlixHQ' provider
 
 ```http
-  GET /flixhq/watch-tv?tmdbId=2316&season=1&episode=1
+  GET /flixhq/watch-tv?tmdbId=2316&season=1&episodeGET /flixhq/watch-tv?tmdbId=2316&season=1&episode=1
 ```
 
 ## Installation
